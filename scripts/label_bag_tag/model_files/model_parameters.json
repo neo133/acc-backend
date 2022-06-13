@@ -1,0 +1,17 @@
+[
+  {
+    "VID_OUT": null,
+    "SAVE_FRAME": false,
+    "IM_SHOW": false,
+    "FRAME_SKIP": 1,
+    "ROIX_DISTANCE": 500,
+    "DETECT_ONLY_AFTER_CX": 0,
+    "DETECT_ONLY_AFTER_CY": 0,
+    "SCORE_THRESHOLD_BAG": 0.7,
+    "IOU_THRESHOLD_BAG": 0.15,
+    "SCORE_THRESHOLD_TAG": 0.4,
+    "IOU_THRESHOLD_TAG": 0.3,
+    "BAG_MODEL_WEIGHT": "bag_835_coco_epoch170.pt",
+    "TAG_MODEL_WEIGHT": "tag_513_coco_best.pt"
+  }
+]

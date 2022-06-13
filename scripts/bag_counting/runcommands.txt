@@ -1,0 +1,6 @@
+### DIRECTION_DICT = {0:"left2right", 1:"right2left"}
+#### 
+
+## normal video
+
+python bag_counting.py --vid_list /home/frinks1/Downloads/DP/jsw/normal_cases/bag_counting/ch01_00000000008000000.mp4 --dir_list 1
