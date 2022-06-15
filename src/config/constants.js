@@ -1,12 +1,27 @@
 require('dotenv').config();
 
-const config = {
-  PORT: process.env.PORT || 9000,
-  REDIS_ENDPOINT: process.env.REDIS_ENDPOINT,
-  REDIS_PORT: process.env.REDIS_PORT,
-  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-  REDIS_EXPIRY: process.env.REDIS_EXPIRY,
-  MONGODB_PASSWORD: process.env.MONGODB_PASSWORD,
-  MONGODB_USER: process.env.MONGODB_USER
+const WHITELIST = {
+  users: {
+    create: ['first_name', 'last_name', 'email', 'password', 'phone_number']
+  }
 };
-export default config;
+
+const configObj = {
+  JWT_EXPIRATION: process.env.JWT_EXPIRATION,
+  DB_USER: process.env.DB_USER,
+  DB_PASSWORD: process.env.DB_PASSWORD,
+  DB_NAME: process.env.DB_NAME,
+  DB_PORT: process.env.DB_PORT,
+  DB_DOMAIN: process.env.DB_DOMAIN,
+  ALLOWED_DOMAIN: process.env.DASHBOARD_APP_ORIGIN
+};
+
+const defaultConfig = {
+  PORT: process.env.PORT || 9000,
+  WHITELIST
+};
+
+export default {
+  ...defaultConfig,
+  ...configObj
+};

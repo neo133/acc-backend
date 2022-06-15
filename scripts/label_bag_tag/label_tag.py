@@ -1,14 +1,14 @@
 
 ### importing required libraries
-
-from tarfile import TarFile
+# 
+# from tarfile import TarFile
 import torch
 import cv2
 import time
 import numpy as np
 import os
 import sys
-import argparse
+# import argparse
 
 #### trackers
 from mylib.centroidtracker_move import CentroidTracker
@@ -33,7 +33,7 @@ IM_SHOW = data_jsonx['IM_SHOW']
 
 FRAME_SKIP = data_jsonx['FRAME_SKIP']
 AFTER_FRAME =1 # 1350 ## 3500
-ROIX_DISTANCE = data_jsonx['ROIX_DISTANCE'] ### a ROI is created at a distance of 500 pxl away from centroid. Count information will be updated when a bag crosses this ROI
+# ROIX_DISTANCE = data_jsonx['ROIX_DISTANCE'] ### a ROI is created at a distance of 500 pxl away from centroid. Count information will be updated when a bag crosses this ROI
 
 DETECT_ONLY_AFTER_CX = data_jsonx['DETECT_ONLY_AFTER_CX'] ## 245
 DETECT_ONLY_AFTER_CY = data_jsonx['DETECT_ONLY_AFTER_CY']
@@ -49,8 +49,24 @@ IOU_THRESHOLD_TAG = data_jsonx['IOU_THRESHOLD_TAG']
 BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}" ### BAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_bag/yolov5l_training_results/training_backup_800_data_640ims_COCO_ADAM_cstmHyp_hJsw/weights/epoch130.pt'
 TAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['TAG_MODEL_WEIGHT']}"  ### TAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_tag/yolov5l_training_results_data/training_backup_1135dt_coco_hype_adam_hJsw/weights/best.pt'
 
-print(f"[INFO] ---------------- MODEL PARAMETERS ARE: ----------------------\n")
-print(f"VID_OUT = {VID_OUT}, \nSAVE_FRAME = {SAVE_FRAME}, \nIM_SHOW = {IM_SHOW}, \nFRAME_SKIP = {FRAME_SKIP}, \nROIX_DISTANCE = {ROIX_DISTANCE}, \nDETECT_ONLY_AFTER_CX = {DETECT_ONLY_AFTER_CX}, \nDETECT_ONLY_AFTER_CY = {DETECT_ONLY_AFTER_CY}, \nSCORE_THRESHOLD_BAG = {SCORE_THRESHOLD_BAG}, \nIOU_THRESHOLD_BAG = {IOU_THRESHOLD_BAG}, \nSCORE_THRESHOLD_TAG = {SCORE_THRESHOLD_TAG},\nIOU_THRESHOLD_TAG = {IOU_THRESHOLD_TAG}, \nBAG_MODEL_WEIGHT = {BAG_MODEL_WEIGHT} ,\nTAG_MODEL_WEIGHT{TAG_MODEL_WEIGHT}")
+
+
+###### reading information about the belt 
+BELT_MASTER = ['b1','b2','b3','b4','b5']
+B1_LINK, B1_DIR, B1_ROIX, B1_ROICOUNT = data_jsonx["b1"]
+B2_LINK, B2_DIR, B2_ROIX, B2_ROICOUNT = data_jsonx["b2"]
+B3_LINK, B3_DIR, B3_ROIX, B3_ROICOUNT = data_jsonx["b3"]
+B4_LINK, B4_DIR, B4_ROIX, B4_ROICOUNT = data_jsonx["b4"]
+B5_LINK, B5_DIR, B5_ROIX, B5_ROICOUNT = data_jsonx["b5"]
+
+################
+
+
+
+
+
+# print(f"[INFO] ---------------- MODEL PARAMETERS ARE: ----------------------\n")
+# print(f"VID_OUT = {VID_OUT}, \nSAVE_FRAME = {SAVE_FRAME}, \nIM_SHOW = {IM_SHOW}, \nFRAME_SKIP = {FRAME_SKIP}, \nROIX_DISTANCE = {ROIX_DISTANCE}, \nDETECT_ONLY_AFTER_CX = {DETECT_ONLY_AFTER_CX}, \nDETECT_ONLY_AFTER_CY = {DETECT_ONLY_AFTER_CY}, \nSCORE_THRESHOLD_BAG = {SCORE_THRESHOLD_BAG}, \nIOU_THRESHOLD_BAG = {IOU_THRESHOLD_BAG}, \nSCORE_THRESHOLD_TAG = {SCORE_THRESHOLD_TAG},\nIOU_THRESHOLD_TAG = {IOU_THRESHOLD_TAG}, \nBAG_MODEL_WEIGHT = {BAG_MODEL_WEIGHT} ,\nTAG_MODEL_WEIGHT{TAG_MODEL_WEIGHT}")
 
 
 
@@ -59,6 +75,8 @@ print(f"VID_OUT = {VID_OUT}, \nSAVE_FRAME = {SAVE_FRAME}, \nIM_SHOW = {IM_SHOW},
 def detectx (frame_batch, model):
 
     results = model(frame_batch, augment=True)
+    # results = model(frame_batch)
+
 
     ### loopting through detections w.r.t image in order to create the final result_file
 
@@ -75,7 +93,7 @@ def detectx (frame_batch, model):
     return batch_results
 
 ### ------------------------------------ to plot the BBox and results --------------------------------------------------------
-def update_rects_plot_bbox(batch_results,imgs_rgb,classes):
+def update_rects_plot_bbox(batch_results,imgs_rgb,classes,frame_no,transactionid_master, beltid_master):
 
     """
     --> This function takes results, frame and classes
@@ -100,6 +118,8 @@ def update_rects_plot_bbox(batch_results,imgs_rgb,classes):
         
         rects =[] ### rects per image
 
+        frame_forsave = frame.copy() ### to save the raw frame without any annotation on it if the threshold of any detected obect is < threshold value
+
         ### looping through the detections per image
         for i in range(n):
             row = cord[i]
@@ -123,12 +143,31 @@ def update_rects_plot_bbox(batch_results,imgs_rgb,classes):
                         
 
                             
-                        # cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2)
+                        cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2)
 
-                        cv2.putText(frame, text_d, (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2) ## without probability
+                        # cv2.putText(frame, text_d, (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2) ## without probability
 
 
                         rects.append((x1,y1,x2,y2))
+
+
+            ### code to save frames less than threshold
+            
+            elif (row[4] < SCORE_THRESHOLD_BAG) and (0.4< row[4] ):
+
+                x1, y1, x2, y2 = int(row[0]*x_shape), int(row[1]*y_shape), int(row[2]*x_shape), int(row[3]*y_shape) ## BBOx coordniates
+                width = x2 - x1
+                height = y2 - y1
+
+                area = width * height
+
+                if area > 50000:  #### this is to filter out detections with very small area (like small portion of the bag is visible at corner of the screen)
+                    print(f"row[4]: {row[4]}")
+                    ### saving frames with detection below threshold values
+                    os.makedirs(f"./detections/less_th_bag/",exist_ok=True)
+                    # cv2.imwrite(f"./detections/less_th_bag/{transactionid_master[im]}_{beltid_master[im]}_f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg",frame_forsave )
+
+
 
 
         imgs_results.append(frame)
@@ -138,7 +177,7 @@ def update_rects_plot_bbox(batch_results,imgs_rgb,classes):
 
 ############# --------------------------------------------------------- tracker function -------------------------------------------------------
 
-def tracker_im(frame,objects,trackableObject,movement_direction):
+def tracker_im(frame,objects,trackableObject,movement_direction,ROIX_DISTANCE):
     # print(f"[INFO] Tracking and counting. . . ")
 
     image_h, image_w, _ = frame.shape
@@ -177,13 +216,13 @@ def tracker_im(frame,objects,trackableObject,movement_direction):
                 
 
                 if movement_direction == 'left2right':
-                    if centroid[0] > image_w//2: 
+                    if centroid[0] > ROIX_DISTANCE: # ### custom ROI to do counting, image_w//2: is ideal condition
 
                         to.counted = True
 
 
                 else: ### moving right2left
-                    if centroid[0] < image_w//2: 
+                    if centroid[0] < ROIX_DISTANCE: #image_w//2: 
 
                         to.counted = True
 
@@ -203,7 +242,7 @@ def tracker_im(frame,objects,trackableObject,movement_direction):
 
 
 ### ------------------------------------ to plot the BBox and result of LABEL TAG--------------------------------------------------------
-def label_tag_plot_bbox(batch_results,imgs_rgb,classes):
+def label_tag_plot_bbox(batch_results,imgs_rgb,classes,frame_no):
 
     """
     --> This function takes results, frame and classes
@@ -225,6 +264,10 @@ def label_tag_plot_bbox(batch_results,imgs_rgb,classes):
         n = len(labels)
         x_shape, y_shape = frame.shape[1], frame.shape[0]
 
+        frame_forsave = frame.copy() ### to save the raw frame without any annotation on it if the threshold of any detected obect is < threshold value
+
+
+
 
 
         # print(f"[INFO] Total {n} tag detections. . . ")
@@ -244,11 +287,26 @@ def label_tag_plot_bbox(batch_results,imgs_rgb,classes):
 
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255,0), 2) ## BBox 
                     # cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2)
-                    # cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2)
+                    cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2)
 
-                    cv2.putText(frame, text_d , (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2) #### without probability 
+                    # cv2.putText(frame, text_d , (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2) #### without probability 
 
 
+                ### code to save frames less than threshold
+                
+                elif (row[4] < SCORE_THRESHOLD_TAG) and (0.2< row[4] ):
+
+                    x1, y1, x2, y2 = int(row[0]*x_shape), int(row[1]*y_shape), int(row[2]*x_shape), int(row[3]*y_shape) ## BBOx coordniates
+                    width = x2 - x1
+                    height = y2 - y1
+
+                    # area = width * height
+
+                    # if area > 300000:  #### this is to filter out detections with very small area (like small portion of the bag is visible at corner of the screen)
+                    #     print(f"row[4]: {row[4]}")
+                    ### saving frames with detection below threshold values
+                    os.makedirs(f"./detections/less_th_tag/",exist_ok=True)
+                    # cv2.imwrite(f"./detections/less_th_tag/f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg",frame_forsave )
 
 
             imgs_results.append(frame)
@@ -268,20 +326,63 @@ def label_tag_plot_bbox(batch_results,imgs_rgb,classes):
 def main(): ##img_path = Full path to image
 
 
-    ##### to get inputs from commandline
-    cli = argparse.ArgumentParser()
+    ###### USER inputs
+    RTSP_LINKS = [B1_LINK,B2_LINK,B3_LINK,B4_LINK,B5_LINK]
+    vid_directions = [B1_DIR, B2_DIR, B3_DIR, B4_DIR, B5_DIR]
+    roix_master = [B1_ROIX, B2_ROIX, B3_ROIX, B4_ROIX, B5_ROIX]
+    roi_count = [B1_ROICOUNT, B2_ROICOUNT, B3_ROICOUNT, B4_ROICOUNT, B5_ROICOUNT]
+    transaction_id_master = ["id1","id2","id3","id4","id5"]
+    beltid_master = BELT_MASTER
 
-    cli.add_argument("--vid_list", nargs ="*", type= str, default= []) ### list of video directories 
-    cli.add_argument("--dir_list", nargs ="*", type= int, default= []) ## list of moving directions
+    socket_value = "b2"
+    execute_loop = True ### controls the while loop
+    stop_buffer = True ### to control the buffer loop when there is no shipment input
+    belt_activated = [False,False,False,False,False]
+    belt_limit = [3,5,6,4,10]
 
 
-    args = cli.parse_args() ### parsing the arguments
-
-    RTSP_LINKS = args.vid_list
-    vid_directions = args.dir_list
 
 
-    if len(RTSP_LINKS) == len(vid_directions):
+
+    ## checking that len of all input arrays should be same
+    len_check = True  
+
+    try:
+        assert len(RTSP_LINKS) == len(vid_directions) == len(roix_master) == len(roi_count) == len(transaction_id_master) == len(beltid_master)
+    except:
+        len_check = False
+
+    #### roi sanity check 
+    '''
+    - for direction left2right: roix value < roi count
+    - for direction right2left: roix value > roi count
+    - As the bags are getting counted and checked for tag after roix value and all the count values (bag and tag) are being updated after roi count value 
+    
+    '''
+    roi_sanity = True
+    for i in range(len(vid_directions)):
+        if vid_directions[i] == 0: ## left2right
+            if roix_master[i] < roi_count[i] :
+                roi_sanity = True
+            else:
+                roi_sanity = False
+                break
+
+        if vid_directions[i] == 1: ## right2lft
+            if roix_master[i] > roi_count[i] :
+                roi_sanity = True
+            else:
+                roi_sanity = False
+                break
+    
+    if roi_sanity == False:
+        print(f"[ERROR] Please check the roi values according to directions.")
+        sys.exit(1) ### exiting
+
+
+    ###### entering into main area 
+
+    if len_check: ### len(RTSP_LINKS) == len(vid_directions): ## len of all input arrays should be same
 
         VID_DIRECTION = [DIRECTION_DICT[i] for i in vid_directions]
 
@@ -293,7 +394,7 @@ def main(): ##img_path = Full path to image
             ## loading the custom trained model
             # model =  torch.hub.load('ultralytics/yolov5', 'custom', path='bestm_label_bag.pt',force_reload=True) ## if you want to download the git repo and then run the detection
             model =  torch.hub.load('./yolov5-master', 'custom', source ='local', path=BAG_MODEL_WEIGHT,force_reload=True) ### lastm_label_bag.pt--good result,  The repo is stored locally
-            model.conf = SCORE_THRESHOLD_BAG ### setting up confidence threshold
+            # model.conf = SCORE_THRESHOLD_BAG ### setting up confidence threshold
             model.iou = IOU_THRESHOLD_BAG ## setting up iou threshold
 
             classes = model.names ### class names in string format
@@ -301,7 +402,8 @@ def main(): ##img_path = Full path to image
 
             ### tag detection model 
             model_tag =  torch.hub.load('./yolov5-master', 'custom', source ='local', path=TAG_MODEL_WEIGHT,force_reload=True) ### The repo is stored locally
-            model_tag.conf = SCORE_THRESHOLD_TAG ### setting up confidence threshold
+            # model_tag =  torch.hub.load('./yolov5-master', 'custom', source ='local', path=TAG_MODEL_WEIGHT,force_reload=True,device='cpu') ### The repo is stored locally
+            # model_tag.conf = SCORE_THRESHOLD_TAG ### setting up confidence threshold
             model_tag.iou = IOU_THRESHOLD_TAG ## setting up iou threshold
 
 
@@ -315,9 +417,9 @@ def main(): ##img_path = Full path to image
 
         
         #### to create windows according to the no. of videos in RTSP links
-        # if IM_SHOW:
-        #     for i in range(len(RTSP_LINKS)):
-        #         cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
+        if IM_SHOW:
+            for i in range(len(RTSP_LINKS)):
+                cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
 
             
             
@@ -340,12 +442,6 @@ def main(): ##img_path = Full path to image
             master_trackableObject.append({})
             label_tag_count_master.append(0)
             total_bag_master.append(0)
-
-
-
-        # print(type(master_ct[0]), '----------------------this is master ct--------------------')
-
-
 
 
         ########-------------------------------------------------- readnig frames directly from videos --------------------------------------------------------------
@@ -395,25 +491,85 @@ def main(): ##img_path = Full path to image
 
         ############ -------------------------------- main while loop for looping through the videos ------------------------------
 
-        print(f"[INFO] working with videos . . . ")
+        ### this buffer loop as we need to run the programe in every cases. i.e. even if there is no shipment input,the programme will be looping here and will move to the main loop after getting the shipment details
+        while not execute_loop:
+            if stop_buffer == True:
+                print(f"[INFO] Stopping buffer loop and starting main loop.")
+                execute_loop = True
+            continue
 
 
-        while True:
+        print(f"[INFO] Working with video link ... ")
+
+        while execute_loop:
 
             try:
                 # print(f"--------------------------------------------------------------- WORKING WITH FRAME: {FRAME_COUNTER} --------------------------------------------- ")
                 st = time.time()
+                '''
+                IDEAS:
+                - to activate and deactivate cameras. i.e. the whole process will be started with black images and then when a camera gets activated, its images will replace the black image at the corresponding index of img_master
+                - to deactivate the camera after the count reached the user defined limit
+                - to activate cameras in the middle of already running detections, i.e. let's say already there are 2 cameras running and you want to activate a 3rd camera 
+
+                '''
 
                 #### this list contains frames from all the videos i.e. image batch creaded by combining the frames from all the videos              
+                img_master=[np.zeros((750,1000, 3), dtype=np.float32),np.zeros((750,1000, 3), dtype=np.float32),np.zeros((750,1000, 3), dtype=np.float32),np.zeros((750,1000, 3), dtype=np.float32),np.zeros((750,1000, 3), dtype=np.float32)]   ### [img1,img1,img1,img1,img1] ----> frame 1 from all videos 
 
-                img_master=[]   ### [img1,img1,img1,img1,img1] ----> frame 1 from all videos 
+                # img_master=[]   ### [img1,img1,img1,img1,img1] ----> frame 1 from all videos 
 
+               
+                
+                ### checking socket values
+                if socket_value in beltid_master:
+                    
+                    index_value = beltid_master.index(socket_value)
+
+                    belt_activated[index_value] = True
+
+                ##### checking if the bag count crossed the counting limit for the particular bag
                 for i in range(len(RTSP_LINKS)):
-                    success, img = master_video[i].read()
-                    if not success:
-                        img = np.zeros((750,1000, 3), dtype=np.float32)
-                    img_master.append(img)
 
+                    if belt_activated[i] == True: ### first we area checking.. wheteher the bag is currently active or not
+
+
+                        ### checking if the current count is >= the user defined bag limit
+                        if total_bag_master[i] >= belt_limit[i]:
+                            
+                            ### if the limit has been reached, reset all parameters
+                            img_master[i] = np.zeros((750,1000, 3), dtype=np.float32)
+                            master_ct[i] = CentroidTracker()
+                            master_trackableObject[i] = {}
+                            total_bag_master[i] = 0
+                            label_tag_count_master[i] = 0
+                            belt_limit[i] = 0
+                            belt_activated[i] == False
+                            socket_value="z"
+                        
+                        else:
+                            success, img = master_video[i].read()
+                        
+                            if success:
+                                img_master[i] = img               
+ 
+                if socket_value =="z":
+                    socket_value = "b1"
+
+                if FRAME_COUNTER >= 130:
+                    socket_value = "b4"
+
+                if FRAME_COUNTER >= 170:
+                    socket_value = "b2"
+                    belt_limit[1] = 5
+
+                if FRAME_COUNTER >= 190:
+                    socket_value = "b3"
+
+                if FRAME_COUNTER >= 200:
+                    socket_value = "b5"
+                # if FRAME_COUNTER >= 205:
+                #     socket_value = "b2"
                 
 
                 if (FRAME_COUNTER%FRAME_SKIP ==0) and (FRAME_COUNTER >AFTER_FRAME):
@@ -423,7 +579,7 @@ def main(): ##img_path = Full path to image
 
                     ### updating rects 
 
-                    img_master, rects_master, x_mid = update_rects_plot_bbox(batch_results=batch_results, imgs_rgb = img_master, classes= classes)
+                    img_master, rects_master, x_mid = update_rects_plot_bbox(batch_results=batch_results, imgs_rgb = img_master, classes= classes,frame_no= FRAME_COUNTER, transactionid_master= transaction_id_master,beltid_master = beltid_master)
 
                     master_objectx = []  #### [objectsx_1,objectsx_2,objectsx_3,objectsx_4,objectsx_5]
 
@@ -431,7 +587,9 @@ def main(): ##img_path = Full path to image
                         # print(f"--------------------------------- vid direction before updating ct_object: {VID_DIRECTION[i]}")
                         master_objectx.append(master_ct[i].update(rects_master[i], x_mid[i], movement_direction = VID_DIRECTION[i]))
                         # master_ct[i] = master_ct[i].update(rects_master[i], x_mid)
-                        img_master[i],master_trackableObject[i] = tracker_im(img_master[i],objects = master_objectx[i],trackableObject =master_trackableObject[i], movement_direction= VID_DIRECTION[i] )
+                        
+                        ### bag count happening here but will be updated later after roicount
+                        img_master[i],master_trackableObject[i] = tracker_im(img_master[i],objects = master_objectx[i],trackableObject =master_trackableObject[i], movement_direction= VID_DIRECTION[i],ROIX_DISTANCE = roix_master[i] )
 
 
 
@@ -465,7 +623,7 @@ def main(): ##img_path = Full path to image
 
                         if len(id_master[z]) != 0 : ## ensuring that there are valid bag detections are available
 
-                            for ido in id_master[z]: ## ido ---> IDs for a particular image
+                            for ido in id_master[z]: ## ido ---> detected object IDs for a particular image
 
                                 tox = master_trackableObject[z].get(ido, None)  ### getting the trackable object 
 
@@ -473,8 +631,10 @@ def main(): ##img_path = Full path to image
 
                                 image_hx, image_wx, _ = img_master[z].shape ### getting size information of the perticular image
 
-                                COUNT_ROIX_L2R = image_wx//2 + ROIX_DISTANCE
-                                COUNT_ROIX_R2L = image_wx//2 - ROIX_DISTANCE
+                                #### roi_count contains roi values after which all count values (both bag and tag) will be updated
+                                
+                                COUNT_ROIX_L2R = roi_count[z] #### image_wx//2 + ROIX_DISTANCE
+                                COUNT_ROIX_R2L = roi_count[z] #### image_wx//2 - ROIX_DISTANCE
 
 
                                 if movement_direction == "left2right":
@@ -497,15 +657,35 @@ def main(): ##img_path = Full path to image
                                         
                                         total_bag_master[z]  = total_bag_master[z] +1  ### -------------------- increasing bag count
                                         label_tag_count_master[z] = label_tag_count_master[z] +1 #### ------------------- increasing label tag count
+                                        
+                                        #### API CALLS HERE
+                                        print(f"bag counting for transaction_id: { transaction_id_master[z]} with belt {beltid_master[z]}: {total_bag_master[z]} and tag:{label_tag_count_master[z]} ")
+                                        
+                                        
+                                        
                                         tox.tag_crossed_counted = True
 
                                     elif (centroidx[0] > COUNT_ROIX_L2R) and (not tox.tag_detected)  and (not tox.tag_crossed_counted):                                       
 
                                         total_bag_master[z]  = total_bag_master[z] +1 ### -------------------- increasing bag count only
+                                        #### API CALLS HERE
+                                        print(f"bag counting for transaction_id: { transaction_id_master[z]} with belt {beltid_master[z]}: {total_bag_master[z]} and tag:{label_tag_count_master[z]} ")
+
+
+                                        
+                                        
+                                        
+                                        
+                                        xx1,yy1, xx2,yy2 = master_ct[z].BBox.get(ido, None) ### getting BBOx information for this particular ID
+
+
+                                        img_crop = img_master[z][yy1:yy2, xx1:xx2] ### cropping the image according to BBox values. This will be sent to label tag detetion model
+                                        
                                         tox.tag_crossed_counted = True
 
                                         ### to save the frame of missed labels
-                                        # cv2.imwrite(f"./detections/missed_tag.jpg",img_master[z])
+                                        os.makedirs(f"./detections/missed_tag/{transaction_id_master[z]}_{beltid_master[z]}/", exist_ok= True)
+                                        cv2.imwrite(f"./detections/missed_tag/{transaction_id_master[z]}_{beltid_master[z]}/{round(time.time() * 1000)}.jpg",img_crop)
 
 
 
@@ -524,14 +704,30 @@ def main(): ##img_path = Full path to image
                                         
                                         total_bag_master[z]  = total_bag_master[z] +1  ### -------------------- increasing bag count
                                         label_tag_count_master[z] = label_tag_count_master[z] +1 #### ------------------- increasing label tag count
+                                        
+                                        #### API CALLS HERE
+                                        print(f"bag counting for transaction_id: { transaction_id_master[z]} with belt {beltid_master[z]}: {total_bag_master[z]} and tag:{label_tag_count_master[z]} ")
+
+                                        
+
                                         tox.tag_crossed_counted = True
 
                                     elif (centroidx[0] < COUNT_ROIX_R2L) and (not tox.tag_detected)  and (not tox.tag_crossed_counted):
                                         total_bag_master[z]  = total_bag_master[z] +1  ### -------------------- increasing bag count only
+                                        
+                                        #### API CALLS HERE
+                                        print(f"bag counting for transaction_id: { transaction_id_master[z]} with belt {beltid_master[z]}: {total_bag_master[z]} and tag:{label_tag_count_master[z]} ")
+
+                                        xx1,yy1, xx2,yy2 = master_ct[z].BBox.get(ido, None) ### getting BBOx information for this particular ID
+
+
+                                        img_crop = img_master[z][yy1:yy2, xx1:xx2] ### cropping the image according to BBox values. This will be sent to label tag detetion model
+                                        
                                         tox.tag_crossed_counted = True
 
                                         ### to save the frame of missed labels
-                                        # cv2.imwrite(f"./detections/missed_tag.jpg",img_master[z])
+                                        os.makedirs(f"./detections/missed_tag/{transaction_id_master[z]}_{beltid_master[z]}/", exist_ok= True)
+                                        cv2.imwrite(f"./detections/missed_tag/{transaction_id_master[z]}_{beltid_master[z]}/{round(time.time() * 1000)}.jpg",img_crop)
 
                         else:
                             continue ### id no IDs found jump to next loop
@@ -541,7 +737,7 @@ def main(): ##img_path = Full path to image
                     # print(f"----------------------------------------- img_tag_dict_list:\n :{img_tag_dict_list}")
 
 
-                    ###### --------------------------------------------------- LABEL TAG DETECTION and COUNT VALUES UPDATION --------------------------------------------------------------------
+                    ###### --------------------------------------------------- LABEL TAG DETECTION --------------------------------------------------------------------
 
 
                     imgesxt = list(img_tag_dict_list.values()) #### list of all cropped images. i.e. batch of all cropped images which will be sent to label detection model
@@ -554,7 +750,7 @@ def main(): ##img_path = Full path to image
                         batch_results_tag = detectx(frame_batch=imgesxt, model = model_tag) ### TAG DETECTION HAPPENING HERE 
 
                         #### extracting img with label tag bbox ploted on and values ar 'True' or 'False' for label tag detection
-                        imgs_results, result_tag_master = label_tag_plot_bbox(batch_results= batch_results_tag , imgs_rgb = imgesxt,classes= model_tag.names)
+                        imgs_results, result_tag_master = label_tag_plot_bbox(batch_results= batch_results_tag , imgs_rgb = imgesxt,classes= model_tag.names,frame_no= FRAME_COUNTER)
 
 
 
@@ -610,8 +806,8 @@ def main(): ##img_path = Full path to image
 
                         movement_direction = VID_DIRECTION[pl]
 
-                        COUNT_ROIX_L2R = x_shape//2 + ROIX_DISTANCE
-                        COUNT_ROIX_R2L = x_shape//2 - ROIX_DISTANCE
+                        COUNT_ROIX_L2R = roi_count[pl] ### x_shape//2 + ROIX_DISTANCE
+                        COUNT_ROIX_R2L = roi_count[pl] ### x_shape//2 - ROIX_DISTANCE
 
                         if movement_direction == "left2right":
                             
@@ -636,10 +832,10 @@ def main(): ##img_path = Full path to image
                     
                     ###### ----------------------------------- to save frames --------------------------------           
                     
-                    # if SAVE_FRAME:
-                    #     for i in range(len(RTSP_LINKS)):
-                    #         os.makedirs(f"./detections/vid_{i}/",exist_ok=True)
-                    #         cv2.imwrite(f"./detections/vid_{i}/{FRAME_COUNTER}.jpg",img_master[i] )
+                    if SAVE_FRAME:
+                        for i in range(len(RTSP_LINKS)):
+                            os.makedirs(f"./detections/all_frames/{transaction_id_master[i]}_{beltid_master[i]}/",exist_ok=True)
+                            cv2.imwrite(f"./detections/all_frames/{transaction_id_master[i]}_{beltid_master[i]}/{FRAME_COUNTER}.jpg",img_master[i] )
 
 
 
@@ -649,15 +845,15 @@ def main(): ##img_path = Full path to image
                     #         video_writer_master[i].write(img_master[i])
 
 
-                    # if IM_SHOW:
-                    #     for i in range(len(RTSP_LINKS)):
-                    #         cv2.imshow(f"{i}",img_master[i])
+                    if IM_SHOW:
+                        for i in range(len(RTSP_LINKS)):
+                            cv2.imshow(f"{i}",img_master[i])
 
 
                     
-                    # if cv2.waitKey(1)== ord("q"):
-                    #     print(f"[INFO] Exiting. . . ")
-                    #     break
+                    if cv2.waitKey(1)== ord("q"):
+                        print(f"[INFO] Exiting. . . ")
+                        break
 
                     LOOP_NO+=1
 
@@ -673,7 +869,7 @@ def main(): ##img_path = Full path to image
 
                     else:
                         fps_lookup +=1
-                    # print(f"\n\n\n----------------------------------- time taken for 1 complete loop: {(time.time() - st)}\n\n\n")
+                    print(f"\n\n\n----------------------------------- time taken for 1 complete loop: {(time.time() - st)}\n\n\n")
 
                 
                 else:
@@ -697,7 +893,7 @@ def main(): ##img_path = Full path to image
         #         video_writer_master[i].release()
 
     else:
-        print(f"[ERROR!!!] the vid_list and dir_list should be of equal length !!! Please give input correctly")
+        print(f"[ERROR!!!] length of all input arrays (len(RTSP_LINKS) == len(vid_directions) == len(roix_master) == len(roi_count) == len(transaction_id_master) == len(beltid_master)) should be same !!! Please give input correctly")
 
 ### -------------------  calling the main function-------------------------------
 

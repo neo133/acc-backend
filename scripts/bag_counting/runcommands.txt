@@ -3,4 +3,13 @@
 
 ## normal video
 
-python bag_counting.py --vid_list /home/frinks1/Downloads/DP/jsw/normal_cases/bag_counting/ch01_00000000008000000.mp4 --dir_list 1
+python bag_counting.py --vid_list /home/frinks1/Downloads/DP/ACC/ACC/wagon_data/hiv00000.mp4 --dir_list 0 --roix 1900 --transactid id0 --beltid b0
+
+#for multiple video
+python bag_counting.py --vid_list /home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00022_reversed.mp4 /home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00004.mp4 --dir_list 0 1 --roix 1900 500 --transactid id0 id1 --beltid b0 b1
+
+
+
+##### static
+
+python bag_counting.py 

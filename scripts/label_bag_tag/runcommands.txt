@@ -1,9 +1,15 @@
 ### DIRECTION_DICT = {0:"left2right", 1:"right2left"}
 #### 
 
+
+
+
 ############### video writer 
 
-python label_tag.py --vid_list /home/frinks1/Downloads/DP/Heidelberg/label_tag/test/jsw/ch01_00000000021000000.mp4 --dir_list 1
+python label_tag.py --vid_list /home/frinks1/Downloads/DP/Heidelberg/label_tag/test/jsw/ch01_00000000021000000.mp4 --dir_list 1 --roix 1500 --roicount 1900 --transactid id0 --beltid b0
+
+
+python label_tag.py --vid_list /home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/102_clip.mp4 /home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/382a_clip.mp4 --dir_list 0 1 --roix 1500 1300 --roicount 1900 500 --transactid id0 id1 --beltid b0 b1
 
 
 
