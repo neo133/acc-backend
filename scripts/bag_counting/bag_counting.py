@@ -509,10 +509,10 @@ def main(): ##img_path = Full path to image
 
                     ###### ----------------------------------- to save frames --------------------------------           
                     
-                    if SAVE_FRAME:
-                        for i in range(len(RTSP_LINKS)):
-                            os.makedirs(f"./detections/vid_{i}/",exist_ok=True)
-                            cv2.imwrite(f"./detections/vid_{i}/{FRAME_COUNTER}.jpg",img_master[i] )
+                    # if SAVE_FRAME:
+                    #     for i in range(len(RTSP_LINKS)):
+                    #         os.makedirs(f"./detections/vid_{i}/",exist_ok=True)
+                    #         cv2.imwrite(f"./detections/vid_{i}/{FRAME_COUNTER}.jpg",img_master[i] )
 
 
                     #### saving all videos

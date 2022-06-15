@@ -832,10 +832,10 @@ def main(): ##img_path = Full path to image
                     
                     ###### ----------------------------------- to save frames --------------------------------           
                     
-                    if SAVE_FRAME:
-                        for i in range(len(RTSP_LINKS)):
-                            os.makedirs(f"./detections/all_frames/{transaction_id_master[i]}_{beltid_master[i]}/",exist_ok=True)
-                            cv2.imwrite(f"./detections/all_frames/{transaction_id_master[i]}_{beltid_master[i]}/{FRAME_COUNTER}.jpg",img_master[i] )
+                    # if SAVE_FRAME:
+                    #     for i in range(len(RTSP_LINKS)):
+                    #         os.makedirs(f"./detections/all_frames/{transaction_id_master[i]}_{beltid_master[i]}/",exist_ok=True)
+                    #         cv2.imwrite(f"./detections/all_frames/{transaction_id_master[i]}_{beltid_master[i]}/{FRAME_COUNTER}.jpg",img_master[i] )
 
 
 
