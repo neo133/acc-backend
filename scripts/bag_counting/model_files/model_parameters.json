@@ -2,7 +2,7 @@
   {
     "VID_OUT": null,
     "SAVE_FRAME": false,
-    "IM_SHOW": false,
+    "IM_SHOW": true,
     "FRAME_SKIP": 1,
     "DETECT_ONLY_AFTER_CX": 0,
     "DETECT_ONLY_AFTER_CY": 0,

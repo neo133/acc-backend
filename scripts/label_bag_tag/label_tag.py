@@ -61,6 +61,16 @@ B5_LINK, B5_DIR, B5_ROIX, B5_ROICOUNT = data_jsonx["b5"]
 
 ################
 
+###### BASE PARAMETERS
+RTSP_LINKS = [B1_LINK,B2_LINK,B3_LINK,B4_LINK,B5_LINK]
+vid_directions = [B1_DIR, B2_DIR, B3_DIR, B4_DIR, B5_DIR]
+roix_master = [B1_ROIX, B2_ROIX, B3_ROIX, B4_ROIX, B5_ROIX]
+roi_count = [B1_ROICOUNT, B2_ROICOUNT, B3_ROICOUNT, B4_ROICOUNT, B5_ROICOUNT]
+transaction_id_master = ["","","","",""]
+beltid_master = BELT_MASTER
+belt_activated = [False,False,False,False,False]
+belt_limit = [0,0,0,0,0]
+
 
 
 
@@ -143,9 +153,9 @@ def update_rects_plot_bbox(batch_results,imgs_rgb,classes,frame_no,transactionid
                         
 
                             
-                        cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2)
+                        # cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2)
 
-                        # cv2.putText(frame, text_d, (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2) ## without probability
+                        cv2.putText(frame, text_d, (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255), 2) ## without probability
 
 
                         rects.append((x1,y1,x2,y2))
@@ -165,7 +175,7 @@ def update_rects_plot_bbox(batch_results,imgs_rgb,classes,frame_no,transactionid
                     print(f"row[4]: {row[4]}")
                     ### saving frames with detection below threshold values
                     os.makedirs(f"./detections/less_th_bag/",exist_ok=True)
-                    # cv2.imwrite(f"./detections/less_th_bag/{transactionid_master[im]}_{beltid_master[im]}_f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg",frame_forsave )
+                    cv2.imwrite(f"./detections/less_th_bag/{transactionid_master[im]}_{beltid_master[im]}_f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg",frame_forsave )
 
 
 
@@ -287,9 +297,9 @@ def label_tag_plot_bbox(batch_results,imgs_rgb,classes,frame_no):
 
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255,0), 2) ## BBox 
                     # cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2)
-                    cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2)
+                    # cv2.putText(frame, text_d + f" {round(float(row[4]),2)}", (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2)
 
-                    # cv2.putText(frame, text_d , (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2) #### without probability 
+                    cv2.putText(frame, text_d , (x1-80, y1-20), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(0,0,0), 2) #### without probability 
 
 
                 ### code to save frames less than threshold
@@ -306,7 +316,7 @@ def label_tag_plot_bbox(batch_results,imgs_rgb,classes,frame_no):
                     #     print(f"row[4]: {row[4]}")
                     ### saving frames with detection below threshold values
                     os.makedirs(f"./detections/less_th_tag/",exist_ok=True)
-                    # cv2.imwrite(f"./detections/less_th_tag/f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg",frame_forsave )
+                    cv2.imwrite(f"./detections/less_th_tag/f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg",frame_forsave )
 
 
             imgs_results.append(frame)
@@ -318,30 +328,20 @@ def label_tag_plot_bbox(batch_results,imgs_rgb,classes,frame_no):
 
     return imgs_results, result_tag_master
 
+### socket function
+def socket_function(bbelt_id,tra_id, limit):
 
+    if bbelt_id in BELT_MASTER:
+
+        index_value = BELT_MASTER.index(bbelt_id)
+        transaction_id_master[index_value] = tra_id
+        belt_limit[index_value] = limit
+        belt_activated[index_value] = True
 
 
 ### ------------------------------------------------------------------ Main function ---------------------------------------------------------------------------------------------------
 
 def main(): ##img_path = Full path to image
-
-
-    ###### USER inputs
-    RTSP_LINKS = [B1_LINK,B2_LINK,B3_LINK,B4_LINK,B5_LINK]
-    vid_directions = [B1_DIR, B2_DIR, B3_DIR, B4_DIR, B5_DIR]
-    roix_master = [B1_ROIX, B2_ROIX, B3_ROIX, B4_ROIX, B5_ROIX]
-    roi_count = [B1_ROICOUNT, B2_ROICOUNT, B3_ROICOUNT, B4_ROICOUNT, B5_ROICOUNT]
-    transaction_id_master = ["id1","id2","id3","id4","id5"]
-    beltid_master = BELT_MASTER
-
-    socket_value = "b2"
-    execute_loop = True ### controls the while loop
-    stop_buffer = True ### to control the buffer loop when there is no shipment input
-    belt_activated = [False,False,False,False,False]
-    belt_limit = [3,5,6,4,10]
-
-
-
 
 
     ## checking that len of all input arrays should be same
@@ -491,17 +491,9 @@ def main(): ##img_path = Full path to image
 
         ############ -------------------------------- main while loop for looping through the videos ------------------------------
 
-        ### this buffer loop as we need to run the programe in every cases. i.e. even if there is no shipment input,the programme will be looping here and will move to the main loop after getting the shipment details
-        while not execute_loop:
-            if stop_buffer == True:
-                print(f"[INFO] Stopping buffer loop and starting main loop.")
-                execute_loop = True
-            continue
-
-
         print(f"[INFO] Working with video link ... ")
 
-        while execute_loop:
+        while True:
 
             try:
                 # print(f"--------------------------------------------------------------- WORKING WITH FRAME: {FRAME_COUNTER} --------------------------------------------- ")
@@ -519,14 +511,8 @@ def main(): ##img_path = Full path to image
 
                 # img_master=[]   ### [img1,img1,img1,img1,img1] ----> frame 1 from all videos 
 
-               
-                
-                ### checking socket values
-                if socket_value in beltid_master:
-                    
-                    index_value = beltid_master.index(socket_value)
+                socket_function("b1","id1",100)
 
-                    belt_activated[index_value] = True
 
                 ##### checking if the bag count crossed the counting limit for the particular bag
                 for i in range(len(RTSP_LINKS)):
@@ -545,31 +531,29 @@ def main(): ##img_path = Full path to image
                             label_tag_count_master[i] = 0
                             belt_limit[i] = 0
                             belt_activated[i] == False
-                            socket_value="z"
+                            
                         
                         else:
                             success, img = master_video[i].read()
                         
                             if success:
-                                img_master[i] = img               
- 
-                if socket_value =="z":
-                    socket_value = "b1"
+                                img_master[i] = img    
 
-                if FRAME_COUNTER >= 130:
-                    socket_value = "b4"
+
+                if FRAME_COUNTER >= 130 and FRAME_COUNTER<420:
+                    socket_function("b2","id2",100)
 
                 if FRAME_COUNTER >= 170:
-                    socket_value = "b2"
-                    belt_limit[1] = 5
+                    socket_function("b5","id5",100)
 
-                if FRAME_COUNTER >= 190:
-                    socket_value = "b3"
+                if FRAME_COUNTER >= 190 and FRAME_COUNTER<490:
+                    socket_function("b4","id4",100)
 
                 if FRAME_COUNTER >= 200:
-                    socket_value = "b5"
-                # if FRAME_COUNTER >= 205:
-                #     socket_value = "b2"
+                    socket_function("b3","id3",100)
+
+ 
+
                 
 
                 if (FRAME_COUNTER%FRAME_SKIP ==0) and (FRAME_COUNTER >AFTER_FRAME):
