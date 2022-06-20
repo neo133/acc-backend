@@ -14,7 +14,8 @@ const configObj = {
   DB_PORT: process.env.DB_PORT,
   DB_DOMAIN: process.env.DB_DOMAIN,
   ALLOWED_DOMAIN: process.env.DASHBOARD_APP_ORIGIN,
-  IS_SLAVE: process.env.IS_SLAVE === '0'
+  IS_SLAVE: process.env.IS_SLAVE === '0',
+  SLAVE_DOMAIN: process.env.SLAVE_DOMAIN
 };
 
 const defaultConfig = {
