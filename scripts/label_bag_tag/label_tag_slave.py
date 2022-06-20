@@ -435,7 +435,7 @@ def main():  # img_path = Full path to image
             # loading the custom trained model
             # model =  torch.hub.load('ultralytics/yolov5', 'custom', path='bestm_label_bag.pt',force_reload=True) ## if you want to download the git repo and then run the detection
             # lastm_label_bag.pt--good result,  The repo is stored locally
-            model = torch.hub.load(f'{MISSED_TAG_PATH_BASE_URL}/label_bag_tag/yolov5-master',
+            model = torch.hub.load(f'./yolov5-master',
                                    'custom', source='local', path=BAG_MODEL_WEIGHT, force_reload=True)
             # model.conf = SCORE_THRESHOLD_BAG ### setting up confidence threshold
             model.iou = IOU_THRESHOLD_BAG  # setting up iou threshold
@@ -443,7 +443,7 @@ def main():  # img_path = Full path to image
             classes = model.names  # class names in string format
 
             # tag detection model
-            model_tag = torch.hub.load(f'{MISSED_TAG_PATH_BASE_URL}/label_bag_tag/yolov5-master', 'custom', source='local',
+            model_tag = torch.hub.load(f'./yolov5-master', 'custom', source='local',
                                        path=TAG_MODEL_WEIGHT, force_reload=True)  # The repo is stored locally
             # model_tag =  torch.hub.load('./yolov5-master', 'custom', source ='local', path=TAG_MODEL_WEIGHT,force_reload=True,device='cpu') ### The repo is stored locally
             # model_tag.conf = SCORE_THRESHOLD_TAG ### setting up confidence threshold
@@ -458,9 +458,9 @@ def main():  # img_path = Full path to image
             sys.exit(1)  # exiting
 
         # to create windows according to the no. of videos in RTSP links
-        if IM_SHOW:
-            for i in range(len(RTSP_LINKS)):
-                cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
+        # if IM_SHOW:
+        #     for i in range(len(RTSP_LINKS)):
+        #         cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
 
         # ------------------------------------------------------ TRACKERS --------------------------------------------------------------------
 
@@ -888,13 +888,13 @@ def main():  # img_path = Full path to image
                     #     for i in range(len(RTSP_LINKS)):
                     #         video_writer_master[i].write(img_master[i])
 
-                    if IM_SHOW:
-                        for i in range(len(RTSP_LINKS)):
-                            cv2.imshow(f"{i}", img_master[i])
+                    # if IM_SHOW:
+                    #     for i in range(len(RTSP_LINKS)):
+                    #         cv2.imshow(f"{i}", img_master[i])
 
-                    if cv2.waitKey(1) == ord("q"):
-                        print(f"[INFO] Exiting. . . ")
-                        break
+                    # if cv2.waitKey(1) == ord("q"):
+                    #     print(f"[INFO] Exiting. . . ")
+                    #     break
 
                     LOOP_NO += 1
 

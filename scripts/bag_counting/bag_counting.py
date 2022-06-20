@@ -55,7 +55,7 @@ IOU_THRESHOLD_BAG = data_jsonx['IOU_THRESHOLD_BAG']
 
 # BAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/bag_counting/yolov5l_training_results/training_backup_1088_data_640ims_coco_customhype_adam_video247_WITHOUTSBH/weights/epoch220.pt' ### best weight at 267 BEST RESULT SO FAR at epoch220
 # BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}"
-BAG_MODEL_WEIGHT = f"{data_jsonx['BAG_MODEL_WEIGHT']}"
+BAG_MODEL_WEIGHT = data_jsonx['BAG_MODEL_WEIGHT']
 
 
 # reading information about the belt
@@ -319,7 +319,7 @@ def main():  # img_path = Full path to image
             # model =  torch.hub.load('ultralytics/yolov5', 'custom', path='bestm_label_bag.pt',force_reload=True) ## if you want to download the git repo and then run the detection
             # lastm_label_bag.pt--good result,  The repo is stored locally
             model = torch.hub.load(
-                f'{BASE_PATH}/bag_counting/yolov5-master', 'custom', source='local', path=BAG_MODEL_WEIGHT, force_reload=True)
+                f'./yolov5-master', 'custom', source='local', path=BAG_MODEL_WEIGHT, force_reload=True)
             # model.conf = SCORE_THRESHOLD_BAG ### setting up confidence threshold
             model.iou = IOU_THRESHOLD_BAG  # setting up iou threshold
 
@@ -334,9 +334,9 @@ def main():  # img_path = Full path to image
             sys.exit(1)  # exiting
 
         # #### to create windows according to the no. of videos in RTSP links
-        if IM_SHOW:
-            for i in range(len(RTSP_LINKS)):
-                cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
+        # if IM_SHOW:
+        #     for i in range(len(RTSP_LINKS)):
+        #         cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
 
         # ############## ------------------------------------------------------ TRACKERS --------------------------------------------------------------------
 
@@ -409,7 +409,7 @@ def main():  # img_path = Full path to image
                 '''
 
                 # this list contains frames from all the videos i.e. image batch creaded by combining the frames from all the videos
-                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros(
+                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros(
                     (750, 1000, 3), dtype=np.float32)]  # [img1,img1,img1,img1,img1] ----> frame 1 from all videos
 
                 # ### checking socket values
@@ -543,13 +543,13 @@ def main():  # img_path = Full path to image
                     #     for i in range(len(RTSP_LINKS)):
                     #         video_writer_master[i].write(img_master[i])
 
-                    if IM_SHOW:
-                        for i in range(len(RTSP_LINKS)):
-                            cv2.imshow(f"{i}", img_master[i])
+                    # if IM_SHOW:
+                    #     for i in range(len(RTSP_LINKS)):
+                    #         cv2.imshow(f"{i}", img_master[i])
 
-                    if cv2.waitKey(1) == ord("q"):
-                        print(f"[INFO] Exiting. . . ")
-                        break
+                    # if cv2.waitKey(1) == ord("q"):
+                    #     print(f"[INFO] Exiting. . . ")
+                    #     break
 
                     LOOP_NO += 1
 
