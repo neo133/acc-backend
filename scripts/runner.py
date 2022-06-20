@@ -7,6 +7,7 @@ TEST_PATH = '/home/poop/frinks/acc/acc-backend/scripts'
 
 try:
     print("my argument", sys.argv[1])
+    # 0 means master 1 means slave
     if(sys.argv[1] == 0):
         subprocess.Popen(
             [f"python3 {MASTER_PATH}/label_bag_tag/label_tag.py"], shell=True)
