@@ -41,7 +41,8 @@ sftp = ssh.open_sftp()
 print("[INFO] Reading json file and loading model parameters")
 
 # reading parameter json file
-data_jsonx = json.load(open("./model_files/model_parameters_slave.json",))
+data_jsonx = json.load(open(
+    "/home/frinksacckymore002/acc-backend/scripts/label_bag_tag/model_files/model_parameters.json",))
 data_jsonx = data_jsonx[0]
 
 
