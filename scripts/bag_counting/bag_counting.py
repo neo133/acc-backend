@@ -56,25 +56,24 @@ IOU_THRESHOLD_BAG = data_jsonx['IOU_THRESHOLD_BAG']
 BAG_MODEL_WEIGHT = f"{data_jsonx['BAG_MODEL_WEIGHT']}"
 
 
-
 # reading information about the belt
 BELT_MASTER = ['1', '2', '3']
 B1_LINK, B1_DIR, B1_ROIX = data_jsonx["1"]
 B2_LINK, B2_DIR, B2_ROIX = data_jsonx["2"]
-B3_LINK, B3_DIR, B3_ROIX = data_jsonx["3"]
+# B3_LINK, B3_DIR, B3_ROIX = data_jsonx["3"]
 # B4_LINK, B4_DIR, B4_ROIX = data_jsonx["b4"]
 # B5_LINK, B5_DIR, B5_ROIX = data_jsonx["b5"]
 
 ################
 
 # BASE PARAMETERS
-RTSP_LINKS = [B1_LINK, B2_LINK, B3_LINK]
-vid_directions = [B1_DIR, B2_DIR, B3_DIR]
-roix_master = [B1_ROIX, B2_ROIX, B3_ROIX]
-transaction_id_master = ["", "", ""]
+RTSP_LINKS = [B1_LINK, B2_LINK]
+vid_directions = [B1_DIR, B2_DIR]
+roix_master = [B1_ROIX, B2_ROIX]
+transaction_id_master = ["", ""]
 beltid_master = BELT_MASTER
-belt_activated = [False, False, False]
-belt_limit = [0, 0, 0]
+belt_activated = [False, False]
+belt_limit = [0, 0]
 
 
 # socket function
@@ -86,7 +85,7 @@ def socket_function(bbelt_id, tra_id, limit):
         transaction_id_master[index_value] = str(tra_id)
         belt_limit[index_value] = int(limit)
         belt_activated[index_value] = True
-        
+
 
 def stopping_belt_function(belt_id):
 
@@ -96,21 +95,19 @@ def stopping_belt_function(belt_id):
         transaction_id_master[index_value] = ""
         belt_limit[index_value] = 0
         belt_activated[index_value] = False
-    
-        
 
 
 # AK code
 
 @sio.on('service')
 def on_message(data):
-    socket_function(data["bag_counting_belt_id"], data["transaction_id"], data["bag_count_limit"])
+    socket_function(data["bag_counting_belt_id"],
+                    data["transaction_id"], data["bag_count_limit"])
 
 
 @sio.on('stop')
 def on_message(data):
     stopping_belt_function(data["bag_counting_belt_id"])
-
 
 
 # print(f"[INFO] ---------------- MODEL PARAMETERS ARE: ----------------------\n")
@@ -122,7 +119,6 @@ def detectx(frame_batch, model):
 
     results = model(frame_batch, augment=True)
     # results = model(frame_batch)
-
 
     # loopting through detections w.r.t image in order to create the final result_file
 
@@ -398,7 +394,7 @@ def main():  # img_path = Full path to image
             try:
 
                 # print(
-                    # f"--------------------------- {FRAME_COUNTER} ----------------------------")
+                # f"--------------------------- {FRAME_COUNTER} ----------------------------")
 
                 st = time.time()
 
@@ -411,7 +407,8 @@ def main():  # img_path = Full path to image
                 '''
 
                 # this list contains frames from all the videos i.e. image batch creaded by combining the frames from all the videos
-                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32)]  # [img1,img1,img1,img1,img1] ----> frame 1 from all videos
+                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros(
+                    (750, 1000, 3), dtype=np.float32)]  # [img1,img1,img1,img1,img1] ----> frame 1 from all videos
 
                 # ### checking socket values
                 # if socket_value in beltid_master:
@@ -431,7 +428,8 @@ def main():  # img_path = Full path to image
                         if (total_bag_master[i] >= belt_limit[i]):
                             print(f"Executing here... inside limit check")
 
-                            sio.emit("limit-stop", {"transaction_id": transaction_id_master[i]})
+                            sio.emit(
+                                "limit-stop", {"transaction_id": transaction_id_master[i]})
 
                             img_master[i] = np.zeros(
                                 (750, 1000, 3), dtype=np.float32)
@@ -449,16 +447,13 @@ def main():  # img_path = Full path to image
                                 img_master[i] = img
                     else:
 
-                            img_master[i] = np.zeros(
-                                (750, 1000, 3), dtype=np.float32)
-                            master_ct[i] = CentroidTracker()
-                            master_trackableObject[i] = {}
-                            total_bag_master[i] = 0
-                            # belt_limit[i] = 0
-                            # belt_activated[i] == False
-
-                    
-
+                        img_master[i] = np.zeros(
+                            (750, 1000, 3), dtype=np.float32)
+                        master_ct[i] = CentroidTracker()
+                        master_trackableObject[i] = {}
+                        total_bag_master[i] = 0
+                        # belt_limit[i] = 0
+                        # belt_activated[i] == False
 
                 # if socket_value =="z":
                     # socket_value = "b1"
@@ -474,7 +469,6 @@ def main():  # img_path = Full path to image
 
                 # if FRAME_COUNTER >= 200:
                 #     socket_function("b3", "id3", 5)
-
 
                 if (FRAME_COUNTER % FRAME_SKIP == 0) and (FRAME_COUNTER > AFTER_FRAME):
 
