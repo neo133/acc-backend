@@ -10,6 +10,6 @@
     "IOU_THRESHOLD_BAG": 0.15,
     "BAG_MODEL_WEIGHT": "/home/frinksacckymore001/acc-backend/scripts/bag_counting/model_files/bestm_bag.pt",
     "1": ["/home/frinksacckymore001/data_acc/bag_counting_data/hiv00004.mp4", 1, 700],
-    "": ["/home/frinksacckymore001/data_acc/bag_counting_data/hiv00022_reversed.mp4", 0, 1700]
+    "2": ["/home/frinksacckymore001/data_acc/bag_counting_data/hiv00022_reversed.mp4", 0, 1700]
   }
 ]
