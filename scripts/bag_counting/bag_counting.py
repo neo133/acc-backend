@@ -59,7 +59,7 @@ BAG_MODEL_WEIGHT = f"{data_jsonx['BAG_MODEL_WEIGHT']}"
 
 
 # reading information about the belt
-BELT_MASTER = ['1', '2', '3']
+BELT_MASTER = ['1', '2']
 B1_LINK, B1_DIR, B1_ROIX = data_jsonx["1"]
 B2_LINK, B2_DIR, B2_ROIX = data_jsonx["2"]
 # B3_LINK, B3_DIR, B3_ROIX = data_jsonx["3"]
