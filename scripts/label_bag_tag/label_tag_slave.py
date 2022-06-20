@@ -23,7 +23,7 @@ from PIL import Image
 import socketio
 import paramiko
 
-BASE_URL = "http://10.5.50.87:9000"
+BASE_URL = "http://10.5.50.133:9000"
 MISSED_TAG_PATH_BASE_URL = "/home/frinksacckymore002/acc-backend"
 SCP_PATH_BASE_URL = "/home/frinksacckymore001/acc-backend"
 
@@ -32,7 +32,7 @@ sio.connect(BASE_URL)
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect('10.5.50.87', username='frinksacckymore001',
+ssh.connect('10.5.50.133', username='frinksacckymore001',
             password='Frinks@2020')
 sftp = ssh.open_sftp()
 
@@ -42,7 +42,7 @@ print("[INFO] Reading json file and loading model parameters")
 
 # reading parameter json file
 data_jsonx = json.load(open(
-    "/home/frinksacckymore002/acc-backend/scripts/label_bag_tag/model_files/model_parameters.json",))
+    "/home/frinksacckymore002/acc-backend/scripts/label_bag_tag/model_files/model_parameters_slave.json",))
 data_jsonx = data_jsonx[0]
 
 
