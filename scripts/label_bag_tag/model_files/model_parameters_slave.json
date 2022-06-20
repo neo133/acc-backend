@@ -12,23 +12,35 @@
     "IOU_THRESHOLD_TAG": 0.3,
     "BAG_MODEL_WEIGHT": "bag_835_coco_epoch170.pt",
     "TAG_MODEL_WEIGHT": "tag_513_coco_best.pt",
-    "6": [
+    "1": [
       "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/102_clip.mp4",
       0,
       1500,
       1900
     ],
-    "7": [
+    "2": [
       "/home/frinks1/Downloads/DP/ACC_NEW/data/testing/split2_00000003755000000.mp4",
       1,
       700,
       500
     ],
-    "8": [
+    "3": [
       "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/115_clip.mp4",
       0,
       1500,
       1900
+    ],
+    "4": [
+      "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/382a_clip.mp4",
+      1,
+      700,
+      500
+    ],
+    "5": [
+      "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/401a_clip.mp4",
+      1,
+      700,
+      500
     ]
   }
 ]

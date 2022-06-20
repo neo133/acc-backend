@@ -8,31 +8,21 @@
     "DETECT_ONLY_AFTER_CY": 0,
     "SCORE_THRESHOLD_BAG": 0.7,
     "IOU_THRESHOLD_BAG": 0.15,
-    "BAG_MODEL_WEIGHT": "bestm_bag.pt",
-    "b1": [
+    "BAG_MODEL_WEIGHT":  "/home/frinks1/Downloads/DP/Heidelberg/bag_counting/yolov5l_training_results/training_backup_1088_data_640ims_coco_customhype_adam_video247_WITHOUTSBH/weights/epoch220.pt",
+    "1": [
       "/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00004.mp4",
-      0,
-      700
-    ],
-    "b2": [
-      "/home/frinks1/Downloads/DP/ACC_NEW/data/testing/split2_00000003755000000.mp4",
       1,
       700
     ],
-    "b3": [
+    "2": [
+      "/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00021.mp4",
+      1,
+      700
+    ],
+    "3": [
       "/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00022_reversed.mp4",
-      1,
+      0,
       1700
-    ],
-    "b4": [
-      "/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00040.mp4",
-      0,
-      700
-    ],
-    "b5": [
-      "/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00074.mp4",
-      0,
-      700
     ]
   }
 ]

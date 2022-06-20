@@ -17,17 +17,16 @@ deepak_data = [{"VID_OUT":None, ### givr video path
 
 
                  ################# RTSP LINKS from belts
-                 "b1":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00004.mp4",0,700], ### [rtsp links, direction, roix]
-                 "b2":["/home/frinks1/Downloads/DP/ACC_NEW/data/testing/split2_00000003755000000.mp4",1,700],
-                 "b3":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00022_reversed.mp4",1,1700],
-                 "b4":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00040.mp4",0,700],
-                 "b5":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00074.mp4",0,700],
-
+                 "1":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00004.mp4",1,700], ### [rtsp links, direction, roix]
+                 "2":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00021.mp4",1,700],
+                 "3":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00022_reversed.mp4",0,1700],
+                #  "b4":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00040.mp4",0,700],
+                #  "b5":["/home/frinks1/Downloads/DP/Heidelberg/bag_counting/video/1/hiv00074.mp4",0,700],
                  }]
 
-outfile = open("/home/frinks1/Downloads/DP/bag_deployment_new_rules_static/bag_counting/model_files/model_parameters.json", "w")
+outfile = open("/home/frinks1/Documents/acc/acc-backend/scripts/bag_counting/model_files/model_parameters.json", "w")
 json.dump(deepak_data,outfile,indent= 2)
 outfile.close()
 
-data_jsonx = json.load(open("/home/frinks1/Downloads/DP/bag_deployment_new_rules_static/bag_counting/model_files/model_parameters.json",))
+data_jsonx = json.load(open("/home/frinks1/Documents/acc/acc-backend/scripts/bag_counting/model_files/model_parameters.json",))
 print(data_jsonx[0]['SCORE_THRESHOLD_BAG'])

@@ -21,19 +21,27 @@ from PIL import Image
 
 # AK code
 import socketio
+import paramiko
 
-BASE_URL = "http://10.5.50.133:9000"
-MISSED_TAG_PATH_BASE_URL = "/home/frinks1/Documents/acc/acc-backend"
+BASE_URL = "http://10.5.50.87:9000"
+MISSED_TAG_PATH_BASE_URL = "/home/frinksacckymore002/acc-backend"
+SCP_PATH_BASE_URL = "/home/frinksacckymore001/acc-backend"
 
 sio = socketio.Client()
 sio.connect(BASE_URL)
+
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('10.5.50.87', username='frinksacckymore001',
+            password='Frinks@2020')
+sftp = ssh.open_sftp()
 
 # --------------   GLOBAL VARIABLES   ---------------------
 
 print("[INFO] Reading json file and loading model parameters")
 
 # reading parameter json file
-data_jsonx = json.load(open("./model_files/model_parameters.json",))
+data_jsonx = json.load(open("./model_files/model_parameters_slave.json",))
 data_jsonx = data_jsonx[0]
 
 
@@ -63,22 +71,24 @@ TAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['TAG_MODEL_WEIGHT']}"
 
 
 # reading information about the belt
-BELT_MASTER = ['6', '7', '8']
-B1_LINK, B1_DIR, B1_ROIX, B1_ROICOUNT = data_jsonx["6"]
-B2_LINK, B2_DIR, B2_ROIX, B2_ROICOUNT = data_jsonx["7"]
-B3_LINK, B3_DIR, B3_ROIX, B3_ROICOUNT = data_jsonx["8"]
+BELT_MASTER = ['1', '2', '3', '4', '5']
+B1_LINK, B1_DIR, B1_ROIX, B1_ROICOUNT = data_jsonx["1"]
+B2_LINK, B2_DIR, B2_ROIX, B2_ROICOUNT = data_jsonx["2"]
+B3_LINK, B3_DIR, B3_ROIX, B3_ROICOUNT = data_jsonx["3"]
+B4_LINK, B4_DIR, B4_ROIX, B4_ROICOUNT = data_jsonx["4"]
+B5_LINK, B5_DIR, B5_ROIX, B5_ROICOUNT = data_jsonx["5"]
 
 ################
 
 # BASE PARAMETERS
-RTSP_LINKS = [B1_LINK, B2_LINK, B3_LINK]
-vid_directions = [B1_DIR, B2_DIR, B3_DIR]
-roix_master = [B1_ROIX, B2_ROIX, B3_ROIX]
-roi_count = [B1_ROICOUNT, B2_ROICOUNT, B3_ROICOUNT]
-transaction_id_master = ["", "", ""]
+RTSP_LINKS = [B1_LINK, B2_LINK, B3_LINK, B4_LINK, B5_LINK]
+vid_directions = [B1_DIR, B2_DIR, B3_DIR, B4_DIR, B5_DIR]
+roix_master = [B1_ROIX, B2_ROIX, B3_ROIX, B4_ROIX, B5_ROIX]
+roi_count = [B1_ROICOUNT, B2_ROICOUNT, B3_ROICOUNT, B4_ROICOUNT, B5_ROICOUNT]
+transaction_id_master = ["", "", "", "", ""]
 beltid_master = BELT_MASTER
-belt_activated = [False, False, False]
-belt_limit = [0, 0, 0]
+belt_activated = [False, False, False, False, False]
+belt_limit = [0, 0, 0, 0, 0]
 
 
 def socket_function(bbelt_id, tra_id, limit):
@@ -518,8 +528,8 @@ def main():  # img_path = Full path to image
                 '''
 
                 # this list contains frames from all the videos i.e. image batch creaded by combining the frames from all the videos
-                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros(
-                    (750, 1000, 3), dtype=np.float32)]  # [img1,img1,img1,img1,img1] ----> frame 1 from all videos
+                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros(
+                    (750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32)]  # [img1,img1,img1,img1,img1] ----> frame 1 from all videos
 
                 # img_master=[]   ### [img1,img1,img1,img1,img1] ----> frame 1 from all videos
 
@@ -687,6 +697,8 @@ def main():  # img_path = Full path to image
                                             f"{MISSED_TAG_PATH_BASE_URL}/missed_tag/{beltid_master[z]}/{image_name}", "JPEG", optimize=True, quality=10)
 
                                         # API CALLS HERE
+                                        sftp.put(
+                                            f"{MISSED_TAG_PATH_BASE_URL}/missed_tag/{beltid_master[z]}/{image_name}",  f"{SCP_PATH_BASE_URL}/missed_tag/{beltid_master[z]}/{image_name}")
                                         sio.emit("tag-entry", {
                                             "belt_id": beltid_master[z],
                                             "transaction_id": transaction_id_master[z],
@@ -917,6 +929,7 @@ def main():  # img_path = Full path to image
     else:
         print(f"[ERROR!!!] length of all input arrays (len(RTSP_LINKS) == len(vid_directions) == len(roix_master) == len(roi_count) == len(transaction_id_master) == len(beltid_master)) should be same !!! Please give input correctly")
 
+    sftp.close()
 # -------------------  calling the main function-------------------------------
 
 

@@ -21,8 +21,10 @@ import json
 # AK code
 import socketio
 
-sio = socketio.Client('http://localhost:9000')
+BASE_URL = "http://10.5.50.133:9000"
 
+sio = socketio.Client()
+sio.connect(BASE_URL)
 
 # --------------   GLOBAL VARIABLES   ---------------------
 
@@ -50,45 +52,65 @@ SCORE_THRESHOLD_BAG = data_jsonx['SCORE_THRESHOLD_BAG']
 IOU_THRESHOLD_BAG = data_jsonx['IOU_THRESHOLD_BAG']
 
 # BAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/bag_counting/yolov5l_training_results/training_backup_1088_data_640ims_coco_customhype_adam_video247_WITHOUTSBH/weights/epoch220.pt' ### best weight at 267 BEST RESULT SO FAR at epoch220
-BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}"
+# BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}"
+BAG_MODEL_WEIGHT = f"{data_jsonx['BAG_MODEL_WEIGHT']}"
+
 
 
 # reading information about the belt
-BELT_MASTER = ['b1', 'b2', 'b3', 'b4', 'b5']
-B1_LINK, B1_DIR, B1_ROIX = data_jsonx["b1"]
-B2_LINK, B2_DIR, B2_ROIX = data_jsonx["b2"]
-B3_LINK, B3_DIR, B3_ROIX = data_jsonx["b3"]
-B4_LINK, B4_DIR, B4_ROIX = data_jsonx["b4"]
-B5_LINK, B5_DIR, B5_ROIX = data_jsonx["b5"]
+BELT_MASTER = ['1', '2', '3']
+B1_LINK, B1_DIR, B1_ROIX = data_jsonx["1"]
+B2_LINK, B2_DIR, B2_ROIX = data_jsonx["2"]
+B3_LINK, B3_DIR, B3_ROIX = data_jsonx["3"]
+# B4_LINK, B4_DIR, B4_ROIX = data_jsonx["b4"]
+# B5_LINK, B5_DIR, B5_ROIX = data_jsonx["b5"]
 
 ################
 
 # BASE PARAMETERS
-RTSP_LINKS = [B1_LINK, B2_LINK, B3_LINK, B4_LINK, B5_LINK]
-vid_directions = [B1_DIR, B2_DIR, B3_DIR, B4_DIR, B5_DIR]
-roix_master = [B1_ROIX, B2_ROIX, B3_ROIX, B4_ROIX, B5_ROIX]
-transaction_id_master = ["", "", "", "", ""]
+RTSP_LINKS = [B1_LINK, B2_LINK, B3_LINK]
+vid_directions = [B1_DIR, B2_DIR, B3_DIR]
+roix_master = [B1_ROIX, B2_ROIX, B3_ROIX]
+transaction_id_master = ["", "", ""]
 beltid_master = BELT_MASTER
-belt_activated = [False, False, False, False, False]
-belt_limit = [0, 0, 0, 0, 0]
+belt_activated = [False, False, False]
+belt_limit = [0, 0, 0]
+
 
 # socket function
 
 
 def socket_function(bbelt_id, tra_id, limit):
-
-    if bbelt_id in BELT_MASTER:
-
-        index_value = BELT_MASTER.index(bbelt_id)
-        transaction_id_master[index_value] = tra_id
-        belt_limit[index_value] = limit
+    if str(bbelt_id) in BELT_MASTER:
+        index_value = BELT_MASTER.index(str(bbelt_id))
+        transaction_id_master[index_value] = str(tra_id)
+        belt_limit[index_value] = int(limit)
         belt_activated[index_value] = True
+        
+
+def stopping_belt_function(belt_id):
+
+    print(f"stopping belt id:{belt_id}")
+    if str(belt_id) in BELT_MASTER:
+        index_value = BELT_MASTER.index(str(belt_id))
+        transaction_id_master[index_value] = ""
+        belt_limit[index_value] = 0
+        belt_activated[index_value] = False
+    
+        
 
 
 # AK code
-@sio.on('initiate')
+
+@sio.on('service')
 def on_message(data):
-    socket_function(data.belt_id, data.tra_id, data.limit)
+    socket_function(data["bag_counting_belt_id"], data["transaction_id"], data["bag_count_limit"])
+
+
+@sio.on('stop')
+def on_message(data):
+    stopping_belt_function(data["bag_counting_belt_id"])
+
 
 
 # print(f"[INFO] ---------------- MODEL PARAMETERS ARE: ----------------------\n")
@@ -99,6 +121,8 @@ def on_message(data):
 def detectx(frame_batch, model):
 
     results = model(frame_batch, augment=True)
+    # results = model(frame_batch)
+
 
     # loopting through detections w.r.t image in order to create the final result_file
 
@@ -143,7 +167,7 @@ def update_rects_plot_bbox(batch_results, imgs_rgb, classes, frame_no, transacti
         # looping through the detections per image
         for i in range(n):
             row = cord[i]
-            print(f"SCORE_THRESHOLD_BAG:{SCORE_THRESHOLD_BAG}")
+            # print(f"SCORE_THRESHOLD_BAG:{SCORE_THRESHOLD_BAG}")
             # threshold value for detection. We are discarding everything below this value
             if row[4] >= SCORE_THRESHOLD_BAG:
                 # print(f"[INFO] Extracting BBox coordinates. . . ")
@@ -184,7 +208,7 @@ def update_rects_plot_bbox(batch_results, imgs_rgb, classes, frame_no, transacti
 
                 # this is to filter out detections with very small area (like small portion of the bag is visible at corner of the screen)
                 if area > 300000:
-                    print(f"row[4]: {row[4]}")
+                    # print(f"row[4]: {row[4]}")
                     # saving frames with detection below threshold values
                     os.makedirs(f"./detections/less_th_bag/", exist_ok=True)
                     cv2.imwrite(
@@ -239,9 +263,12 @@ def tracker_im(frame, objects, trackableObject, movement_direction, bag_count, R
                         bag_count += 1
 
                         # API CALLS HERE
-
-                        print(
-                            f"bag counting for transaction_id: { transactionid} with belt {beltid} is: {bag_count} ")
+                        sio.emit("bag-entry", {
+                            "belt_id": beltid,
+                            "transaction_id": transactionid
+                        })
+                        # print(
+                        #     f"bag counting for transaction_id: { transactionid} with belt {beltid} is: {bag_count} ")
 
                         to.counted = True
 
@@ -251,9 +278,12 @@ def tracker_im(frame, objects, trackableObject, movement_direction, bag_count, R
                         bag_count += 1
 
                         # API CALLS HERE
-
-                        print(
-                            f"bag counting for transaction_id: { transactionid} with belt {beltid} is: {bag_count} ")
+                        sio.emit("bag-entry", {
+                            "belt_id": beltid,
+                            "transaction_id": transactionid
+                        })
+                        # print(
+                        #     f"bag counting for transaction_id: { transactionid} with belt {beltid} is: {bag_count} ")
 
                         to.counted = True
 
@@ -286,7 +316,7 @@ def main():  # img_path = Full path to image
         VID_DIRECTION = [DIRECTION_DICT[i] for i in vid_directions]
 
         try:
-            print(f"\n[INFO] Loading model... ")
+            # print(f"\n[INFO] Loading model... ")
             # loading the custom trained model
             # model =  torch.hub.load('ultralytics/yolov5', 'custom', path='bestm_label_bag.pt',force_reload=True) ## if you want to download the git repo and then run the detection
             # lastm_label_bag.pt--good result,  The repo is stored locally
@@ -364,11 +394,11 @@ def main():  # img_path = Full path to image
         print(f"[INFO] Working with video link ... ")
 
         while True:
-
+            sio.emit('message', {'foo': 'bar'})
             try:
 
-                print(
-                    f"--------------------------- {FRAME_COUNTER} ----------------------------")
+                # print(
+                    # f"--------------------------- {FRAME_COUNTER} ----------------------------")
 
                 st = time.time()
 
@@ -381,8 +411,7 @@ def main():  # img_path = Full path to image
                 '''
 
                 # this list contains frames from all the videos i.e. image batch creaded by combining the frames from all the videos
-                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros(
-                    (750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32)]  # [img1,img1,img1,img1,img1] ----> frame 1 from all videos
+                img_master = [np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32), np.zeros((750, 1000, 3), dtype=np.float32)]  # [img1,img1,img1,img1,img1] ----> frame 1 from all videos
 
                 # ### checking socket values
                 # if socket_value in beltid_master:
@@ -391,7 +420,7 @@ def main():  # img_path = Full path to image
 
                 #     belt_activated[index_value] = True
 
-                socket_function("b1", "id1", 5)
+                # socket_function("b1", "id1", 5)
 
                 # checking if the bag count crossed the counting limit for the particular bag
                 for i in range(len(RTSP_LINKS)):
@@ -399,7 +428,10 @@ def main():  # img_path = Full path to image
                     # first we area checking.. wheteher the bag is currently active or not
                     if belt_activated[i] == True:
 
-                        if total_bag_master[i] >= belt_limit[i]:
+                        if (total_bag_master[i] >= belt_limit[i]):
+                            print(f"Executing here... inside limit check")
+
+                            sio.emit("limit-stop", {"transaction_id": transaction_id_master[i]})
 
                             img_master[i] = np.zeros(
                                 (750, 1000, 3), dtype=np.float32)
@@ -407,7 +439,7 @@ def main():  # img_path = Full path to image
                             master_trackableObject[i] = {}
                             total_bag_master[i] = 0
                             belt_limit[i] = 0
-                            belt_activated[i] == False
+                            belt_activated[i] = False
                             # socket_value="z"
 
                         else:
@@ -415,21 +447,34 @@ def main():  # img_path = Full path to image
 
                             if success:
                                 img_master[i] = img
+                    else:
+
+                            img_master[i] = np.zeros(
+                                (750, 1000, 3), dtype=np.float32)
+                            master_ct[i] = CentroidTracker()
+                            master_trackableObject[i] = {}
+                            total_bag_master[i] = 0
+                            # belt_limit[i] = 0
+                            # belt_activated[i] == False
+
+                    
+
 
                 # if socket_value =="z":
                     # socket_value = "b1"
 
-                if FRAME_COUNTER >= 130:
-                    socket_function("b2", "id2", 10)
+                # if FRAME_COUNTER >= 130:
+                #     socket_function("b2", "id2", 10)
 
-                if FRAME_COUNTER >= 170:
-                    socket_function("b5", "id5", 5)
+                # if FRAME_COUNTER >= 170:
+                #     socket_function("b5", "id5", 5)
 
-                if FRAME_COUNTER >= 190:
-                    socket_function("b4", "id4", 4)
+                # if FRAME_COUNTER >= 190:
+                #     socket_function("b4", "id4", 4)
 
-                if FRAME_COUNTER >= 200:
-                    socket_function("b3", "id3", 5)
+                # if FRAME_COUNTER >= 200:
+                #     socket_function("b3", "id3", 5)
+
 
                 if (FRAME_COUNTER % FRAME_SKIP == 0) and (FRAME_COUNTER > AFTER_FRAME):
 
@@ -488,7 +533,7 @@ def main():  # img_path = Full path to image
                         cv2.putText(img_c, f"total_bag_passed: {total_bag_passed}", (
                             100, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
-                        print(f"total_bag_passed:{total_bag_passed}")
+                        # print(f"total_bag_passed:{total_bag_passed}")
 
                     # ----------------------------------- to save frames --------------------------------
 
@@ -524,8 +569,8 @@ def main():  # img_path = Full path to image
 
                     else:
                         fps_lookup += 1
-                    print(
-                        f"\n\n\n----------------------------------- time taken for 1 complete loop: {(time.time() - st)}\n\n\n")
+                    # print(
+                    #     f"\n\n\n----------------------------------- time taken for 1 complete loop: {(time.time() - st)}\n\n\n")
 
                 else:
                     # print(f"skipping as current frame is : {FRAME_COUNTER}")
