@@ -2,7 +2,7 @@ import json
 
 deepak_data = [{"VID_OUT": None,  # givr video path
                 "SAVE_FRAME": False,  # true or false
-                "IM_SHOW": True,  # true or false
+                "IM_SHOW": False,  # true or false
                 "FRAME_SKIP": 1,
                 #  "ROIX_DISTANCE":0,
 
