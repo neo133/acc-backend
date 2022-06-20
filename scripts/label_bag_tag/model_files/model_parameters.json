@@ -10,8 +10,8 @@
     "IOU_THRESHOLD_BAG": 0.15,
     "SCORE_THRESHOLD_TAG": 0.45,
     "IOU_THRESHOLD_TAG": 0.3,
-    "BAG_MODEL_WEIGHT": "/home/frinksacckymore001/acc-backend/scripts/label_bag_tag/model_files/bag_835_coco_epoch170.pt",
-    "TAG_MODEL_WEIGHT": "/home/frinksacckymore001/acc-backend/scripts/label_bag_tag/model_files/tag_513_coco_best.pt",
+    "BAG_MODEL_WEIGHT": "/home/frinksacckymore001/bag_835_coco_epoch170.pt",
+    "TAG_MODEL_WEIGHT": "/home/frinksacckymore001/tag_513_coco_best.pt",
     "6": ["/home/frinksacckymore001/data_acc/label_tag_data/102_clip.mp4", 0, 1500, 1900],
     "7": [
       "/home/frinksacckymore001/data_acc/label_tag_data/split2_00000003755000000.mp4",
