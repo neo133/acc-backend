@@ -11,8 +11,7 @@ import {
   getActiveTransaction,
   changeBagCount,
   stopBelt,
-  getMissingLabels,
-  createSlaveService
+  getMissingLabels
 } from '../controllers/transaction.controller';
 
 const routes = new Router();
@@ -23,7 +22,6 @@ routes.get('/beltIds', getBeltIds);
 routes.get('/', getActiveTransaction);
 routes.get('/missing-labels', getMissingLabels);
 
-routes.post('/salve-service', createSlaveService);
 routes.post('/service', createServiceEntry);
 routes.post('/maintenance', createMaintenanceEntry);
 routes.post('/bag-entry', createBagEntry);

@@ -10,37 +10,17 @@
     "IOU_THRESHOLD_BAG": 0.15,
     "SCORE_THRESHOLD_TAG": 0.45,
     "IOU_THRESHOLD_TAG": 0.3,
-    "BAG_MODEL_WEIGHT": "bag_835_coco_epoch170.pt",
-    "TAG_MODEL_WEIGHT": "tag_513_coco_best.pt",
-    "1": [
-      "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/102_clip.mp4",
-      0,
-      1500,
-      1900
-    ],
+    "BAG_MODEL_WEIGHT": "/home/frinksacckymore002/acc-backend/scripts/label_bag_tag/model_files/bag_835_coco_epoch170.pt",
+    "TAG_MODEL_WEIGHT": "/home/frinksacckymore002/acc-backend/scripts/label_bag_tag/model_files/tag_513_coco_best.pt",
+    "1": ["/home/frinksacckymore002/data_acc/label_tag_data/102_clip.mp4", 0, 1500, 1900],
     "2": [
-      "/home/frinks1/Downloads/DP/ACC_NEW/data/testing/split2_00000003755000000.mp4",
+      "/home/frinksacckymore002/data_acc/label_tag_data/split2_00000003755000000.mp4",
       1,
       700,
       500
     ],
-    "3": [
-      "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/115_clip.mp4",
-      0,
-      1500,
-      1900
-    ],
-    "4": [
-      "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/382a_clip.mp4",
-      1,
-      700,
-      500
-    ],
-    "5": [
-      "/home/frinks1/Downloads/DP/Heidelberg/label_tag/test/unseen_clips/401a_clip.mp4",
-      1,
-      700,
-      500
-    ]
+    "3": ["/home/frinksacckymore002/data_acc/label_tag_data/115_clip.mp4", 0, 1500, 1900],
+    "4": ["/home/frinksacckymore002/data_acc/label_tag_data/382a_clip.mp4", 1, 700, 500],
+    "5": ["/home/frinksacckymore002/data_acc/label_tag_data/401a_clip.mp4", 1, 700, 500]
   }
 ]

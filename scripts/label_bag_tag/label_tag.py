@@ -22,7 +22,7 @@ from PIL import Image
 # AK code
 import socketio
 
-BASE_URL = "http://10.5.50.133:9000"
+BASE_URL = "http://localhost:9000"
 MISSED_TAG_PATH_BASE_URL = "/home/frinks1/Documents/acc/acc-backend"
 
 sio = socketio.Client()
@@ -57,10 +57,13 @@ IOU_THRESHOLD_TAG = data_jsonx['IOU_THRESHOLD_TAG']
 
 
 # BAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_bag/yolov5l_training_results/training_backup_800_data_640ims_COCO_ADAM_cstmHyp_hJsw/weights/epoch130.pt'
-BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}"
-# TAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_tag/yolov5l_training_results_data/training_backup_1135dt_coco_hype_adam_hJsw/weights/best.pt'
-TAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['TAG_MODEL_WEIGHT']}"
+# BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}"
+# # TAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_tag/yolov5l_training_results_data/training_backup_1135dt_coco_hype_adam_hJsw/weights/best.pt'
+# TAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['TAG_MODEL_WEIGHT']}"
 
+BAG_MODEL_WEIGHT = f"{data_jsonx['BAG_MODEL_WEIGHT']}"
+# TAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_tag/yolov5l_training_results_data/training_backup_1135dt_coco_hype_adam_hJsw/weights/best.pt'
+TAG_MODEL_WEIGHT = f"{data_jsonx['TAG_MODEL_WEIGHT']}"
 
 # reading information about the belt
 BELT_MASTER = ['6', '7', '8']

@@ -21,7 +21,7 @@ import json
 # AK code
 import socketio
 
-BASE_URL = "http://10.5.50.133:9000"
+BASE_URL = "http://localhost:9000"
 
 sio = socketio.Client()
 sio.connect(BASE_URL)
