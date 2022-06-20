@@ -102,7 +102,12 @@ export const createServiceEntry = async (req, res) => {
     // emit socket to python code with transaction id
     const { id, printing_belt_id, vehicle_id, bag_count } = serviceRes;
     // send data to slave also
-    axios.post(constants.SLAVE_DOMAIN, { id, printing_belt_id, vehicle_id, bag_count });
+    axios.post(`${constants.SLAVE_DOMAIN}/api/transaction/salve-service`, {
+      id,
+      printing_belt_id,
+      vehicle_id,
+      bag_count
+    });
     io.sockets.emit('service', {
       transaction_id: id,
       printing_belt_id,
