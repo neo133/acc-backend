@@ -22,6 +22,7 @@ import json
 import socketio
 
 BASE_URL = "http://localhost:9000"
+BASE_PATH = '/home/frinksacckymore001/acc-backend'
 
 sio = socketio.Client()
 sio.connect(BASE_URL)
@@ -204,12 +205,12 @@ def update_rects_plot_bbox(batch_results, imgs_rgb, classes, frame_no, transacti
                 area = width * height
 
                 # this is to filter out detections with very small area (like small portion of the bag is visible at corner of the screen)
-                if area > 300000:
-                    # print(f"row[4]: {row[4]}")
-                    # saving frames with detection below threshold values
-                    os.makedirs(f"./detections/less_th_bag/", exist_ok=True)
-                    cv2.imwrite(
-                        f"./detections/less_th_bag/{transactionid_master[im]}_{beltid_master[im]}_f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg", frame_forsave)
+                # if area > 300000:
+                # print(f"row[4]: {row[4]}")
+                # saving frames with detection below threshold values
+                # os.makedirs(f"./detections/less_th_bag/", exist_ok=True)
+                # cv2.imwrite(
+                #     f"./detections/less_th_bag/{transactionid_master[im]}_{beltid_master[im]}_f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg", frame_forsave)
 
         imgs_results.append(frame)
         rects_master.append(rects)
@@ -318,7 +319,7 @@ def main():  # img_path = Full path to image
             # model =  torch.hub.load('ultralytics/yolov5', 'custom', path='bestm_label_bag.pt',force_reload=True) ## if you want to download the git repo and then run the detection
             # lastm_label_bag.pt--good result,  The repo is stored locally
             model = torch.hub.load(
-                './yolov5-master', 'custom', source='local', path=BAG_MODEL_WEIGHT, force_reload=True)
+                f'{BASE_PATH}/bag_counting/yolov5-master', 'custom', source='local', path=BAG_MODEL_WEIGHT, force_reload=True)
             # model.conf = SCORE_THRESHOLD_BAG ### setting up confidence threshold
             model.iou = IOU_THRESHOLD_BAG  # setting up iou threshold
 

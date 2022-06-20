@@ -66,10 +66,12 @@ IOU_THRESHOLD_TAG = data_jsonx['IOU_THRESHOLD_TAG']
 
 
 # BAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_bag/yolov5l_training_results/training_backup_800_data_640ims_COCO_ADAM_cstmHyp_hJsw/weights/epoch130.pt'
-BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}"
+#BAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['BAG_MODEL_WEIGHT']}"
 # TAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_tag/yolov5l_training_results_data/training_backup_1135dt_coco_hype_adam_hJsw/weights/best.pt'
-TAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['TAG_MODEL_WEIGHT']}"
-
+# TAG_MODEL_WEIGHT = f"./model_files/{data_jsonx['TAG_MODEL_WEIGHT']}"
+BAG_MODEL_WEIGHT = f"{data_jsonx['BAG_MODEL_WEIGHT']}"
+# TAG_MODEL_WEIGHT = '/home/frinks1/Downloads/DP/Heidelberg/label_tag/yolov5l_training_results_data/training_backup_1135dt_coco_hype_adam_hJsw/weights/best.pt'
+TAG_MODEL_WEIGHT = f"{data_jsonx['TAG_MODEL_WEIGHT']}"
 
 # reading information about the belt
 BELT_MASTER = ['1', '2', '3', '4', '5']
@@ -233,13 +235,13 @@ def update_rects_plot_bbox(batch_results, imgs_rgb, classes, frame_no, transacti
 
                 area = width * height
 
-                # this is to filter out detections with very small area (like small portion of the bag is visible at corner of the screen)
-                if area > 50000:
-                    # print(f"row[4]: {row[4]}")
-                    # saving frames with detection below threshold values
-                    os.makedirs(f"./detections/less_th_bag/", exist_ok=True)
-                    cv2.imwrite(
-                        f"./detections/less_th_bag/{transactionid_master[im]}_{beltid_master[im]}_f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg", frame_forsave)
+                # # this is to filter out detections with very small area (like small portion of the bag is visible at corner of the screen)
+                # if area > 50000:
+                #     # print(f"row[4]: {row[4]}")
+                #     # saving frames with detection below threshold values
+                #     # os.makedirs(f"./detections/less_th_bag/", exist_ok=True)
+                #     cv2.imwrite(
+                #         f"./detections/less_th_bag/{transactionid_master[im]}_{beltid_master[im]}_f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg", frame_forsave)
 
         imgs_results.append(frame)
         rects_master.append(rects)
@@ -369,9 +371,9 @@ def label_tag_plot_bbox(batch_results, imgs_rgb, classes, frame_no):
                     # if area > 300000:  #### this is to filter out detections with very small area (like small portion of the bag is visible at corner of the screen)
                     #     print(f"row[4]: {row[4]}")
                     # saving frames with detection below threshold values
-                    os.makedirs(f"./detections/less_th_tag/", exist_ok=True)
-                    cv2.imwrite(
-                        f"./detections/less_th_tag/f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg", frame_forsave)
+                    # os.makedirs(f"./detections/less_th_tag/", exist_ok=True)
+                    # cv2.imwrite(
+                    #     f"./detections/less_th_tag/f{frame_no}_dn{n}_th{round(float(row[4]),5)}.jpg", frame_forsave)
 
             imgs_results.append(frame)
             result_tag_master.append(True)
@@ -433,15 +435,15 @@ def main():  # img_path = Full path to image
             # loading the custom trained model
             # model =  torch.hub.load('ultralytics/yolov5', 'custom', path='bestm_label_bag.pt',force_reload=True) ## if you want to download the git repo and then run the detection
             # lastm_label_bag.pt--good result,  The repo is stored locally
-            model = torch.hub.load(
-                './yolov5-master', 'custom', source='local', path=BAG_MODEL_WEIGHT, force_reload=True)
+            model = torch.hub.load(f'{MISSED_TAG_PATH_BASE_URL}/label_bag_tag/yolov5-master',
+                                   'custom', source='local', path=BAG_MODEL_WEIGHT, force_reload=True)
             # model.conf = SCORE_THRESHOLD_BAG ### setting up confidence threshold
             model.iou = IOU_THRESHOLD_BAG  # setting up iou threshold
 
             classes = model.names  # class names in string format
 
             # tag detection model
-            model_tag = torch.hub.load('./yolov5-master', 'custom', source='local',
+            model_tag = torch.hub.load(f'{MISSED_TAG_PATH_BASE_URL}/label_bag_tag/yolov5-master', 'custom', source='local',
                                        path=TAG_MODEL_WEIGHT, force_reload=True)  # The repo is stored locally
             # model_tag =  torch.hub.load('./yolov5-master', 'custom', source ='local', path=TAG_MODEL_WEIGHT,force_reload=True,device='cpu') ### The repo is stored locally
             # model_tag.conf = SCORE_THRESHOLD_TAG ### setting up confidence threshold
