@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
           model: 'printing_belt_master',
           key: 'id'
         }
+      },
+      is_active: {
+        type: DataTypes.TINYINT,
+        allowNull: true,
+        defaultValue: 1
       }
     },
     {

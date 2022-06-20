@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
           model: 'packer_master',
           key: 'id'
         }
+      },
+      is_active: {
+        type: DataTypes.TINYINT,
+        allowNull: true,
+        defaultValue: 1
       }
     },
     {

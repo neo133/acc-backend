@@ -1,7 +1,7 @@
-import bcrypt from 'bcrypt-nodejs';
+import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import Sequelize from 'sequelize';
-import fs from 'fs';
+import bcrypt from 'bcrypt-nodejs';
 import constants from '../config/constants';
 
 const privateKey = fs.readFileSync('./private.key', 'utf8');

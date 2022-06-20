@@ -5,14 +5,15 @@ import { Server } from 'socket.io';
 import middlewaresConfig from './config/middlewares';
 import constants from './config/constants';
 import ApiRoutes from './routes';
+import { createBagEntry, createTagEntry } from './controllers/transaction.controller';
 
 const app = express();
 const httpServer = createServer(app);
-export const io = new Server(httpServer, { cors: { origin: '*' } });
 
 middlewaresConfig(app);
 
 app.use('/api', ApiRoutes);
+
 if (!module.parent) {
   httpServer.listen(constants.PORT, err => {
     if (err) {
@@ -22,5 +23,21 @@ if (!module.parent) {
     }
   });
 }
+
+export const io = new Server(httpServer, { cors: { origin: '*' } });
+
+io.on('connection', socket => {
+  console.log(socket.id);
+  socket.on('bag-entry', data => {
+    // call transaction controlled function
+    io.sockets.emit('entry', data);
+    createBagEntry(data);
+  });
+  socket.on('tag-entry', data => {
+    // call transaction controlled function
+    io.sockets.emit('entry', data);
+    createTagEntry(data);
+  });
+});
 
 export default app;

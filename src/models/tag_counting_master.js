@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
-    'transaction_master',
+    'tag_counting_master',
     {
       id: {
         autoIncrement: true,
@@ -12,50 +12,51 @@ module.exports = (sequelize, DataTypes) => {
       },
       printing_belt_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'printing_belt_master',
           key: 'id'
         }
       },
-      vehicle_id: {
+      transaction_id: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
-          model: 'vehicle_master',
+          model: 'transaction_master',
           key: 'id'
         }
       },
-      licence_number: {
-        type: DataTypes.STRING(100),
+      is_labled: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue: 1
+      },
+      local_image_location: {
+        type: DataTypes.STRING(300),
         allowNull: true
       },
-      bag_type: {
-        type: DataTypes.STRING(100),
-        allowNull: true
-      },
-      bag_count: {
+      api_status: {
         type: DataTypes.INTEGER,
         allowNull: true
       },
-      is_active: {
-        type: DataTypes.TINYINT,
-        allowNull: true,
-        defaultValue: 1
+      s3_image_location: {
+        type: DataTypes.STRING(300),
+        allowNull: true
       },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: Sequelize.Sequelize.fn('current_timestamp')
       },
-      stopped_at: {
-        type: DataTypes.DATE,
-        allowNull: true
+      is_false_alert: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue: 0
       }
     },
     {
       sequelize,
-      tableName: 'transaction_master',
+      tableName: 'tag_counting_master',
       timestamps: false,
       indexes: [
         {
@@ -65,14 +66,14 @@ module.exports = (sequelize, DataTypes) => {
           fields: [{ name: 'id' }]
         },
         {
-          name: 'transaction_master_FK',
+          name: 'tag_counting_master_FK',
           using: 'BTREE',
           fields: [{ name: 'printing_belt_id' }]
         },
         {
-          name: 'transaction_master_FK_1',
+          name: 'tag_counting_master_FK_1',
           using: 'BTREE',
-          fields: [{ name: 'vehicle_id' }]
+          fields: [{ name: 'transaction_id' }]
         }
       ]
     }

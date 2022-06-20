@@ -6,7 +6,6 @@ import expressWinston from 'express-winston';
 import methodOverride from 'method-override';
 import helmet from 'helmet';
 import cors from 'cors';
-import expressStatusMonitor from 'express-status-monitor';
 import cookieParser from 'cookie-parser';
 import winstonInstance from './winston';
 import constants from './constants';
@@ -36,7 +35,6 @@ export default app => {
   app.use(cookieParser());
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(expressStatusMonitor());
   app.use(methodOverride());
   passport.serializeUser((user, cb) => {
     cb(null, user);

@@ -1,5 +1,6 @@
 import { Joi } from 'express-validation';
 import { sendHttpResponse } from '../utils/createReponse';
+import { io } from '../index';
 
 export const validation = {
   create: {
@@ -31,6 +32,16 @@ export const me = async (req, res) => {
       return sendHttpResponse(res, 'Please signup to continue', {}, 204, false);
     }
     const { id, first_name, last_name, email, phone_number, role } = req.user;
+    io.sockets.emit('service_initiate', {
+      data: {
+        name: 'apple'
+      }
+    });
+    io.emit('service_initiate', {
+      data: {
+        name: 'io'
+      }
+    });
     return sendHttpResponse(res, 'Success', {
       id,
       first_name,
