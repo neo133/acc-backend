@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { sendHttpResponse } from '../utils/createReponse';
 import {
   createService,
@@ -19,7 +18,6 @@ import {
   fetchMissingLabels
 } from '../sequelizeQueries/transaction.queries';
 import { io } from '../index';
-import constants from '../config/constants';
 
 export const getPrintingBelts = async (req, res) => {
   try {
@@ -101,15 +99,6 @@ export const createServiceEntry = async (req, res) => {
     };
     // emit socket to python code with transaction id
     const { id, printing_belt_id, vehicle_id, bag_count } = serviceRes;
-    if (!constants.IS_SLAVE) {
-      // send data to slave also
-      axios.post(`${constants.SLAVE_DOMAIN}/api/transaction/salve-service`, {
-        id,
-        printing_belt_id,
-        vehicle_id,
-        bag_count
-      });
-    }
     io.sockets.emit('service', {
       transaction_id: id,
       printing_belt_id,
