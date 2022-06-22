@@ -702,6 +702,7 @@ def main():  # img_path = Full path to image
                                         # API CALLS HERE
                                         sftp.put(
                                             f"{MISSED_TAG_PATH_BASE_URL}/missed_tag/{beltid_master[z]}/{image_name}",  f"{SCP_PATH_BASE_URL}/missed_tag/{beltid_master[z]}/{image_name}")
+                                        print("")
                                         sio.emit("tag-entry", {
                                             "belt_id": beltid_master[z],
                                             "transaction_id": transaction_id_master[z],
@@ -888,13 +889,13 @@ def main():  # img_path = Full path to image
                     #     for i in range(len(RTSP_LINKS)):
                     #         video_writer_master[i].write(img_master[i])
 
-                    # if IM_SHOW:
-                    #     for i in range(len(RTSP_LINKS)):
-                    #         cv2.imshow(f"{i}", img_master[i])
+                    if IM_SHOW:
+                        for i in range(len(RTSP_LINKS)):
+                            cv2.imshow(f"{i}", img_master[i])
 
-                    # if cv2.waitKey(1) == ord("q"):
-                    #     print(f"[INFO] Exiting. . . ")
-                    #     break
+                    if cv2.waitKey(1) == ord("q"):
+                        print(f"[INFO] Exiting. . . ")
+                        break
 
                     LOOP_NO += 1
 

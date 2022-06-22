@@ -25,8 +25,8 @@
       500
     ],
     "3": [
-      "rtsp://admin:Frinks%402020@192.168.1.16:554/Streaming/channels/101?transportmode=unicast",
-      0,
+      "rtsp://admin:Frinks%402020@192.168.1.15:554/Streaming/channels/101?transportmode=unicast",
+      1,
       1280,
       500
     ],
