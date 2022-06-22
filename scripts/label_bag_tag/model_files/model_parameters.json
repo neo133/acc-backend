@@ -12,13 +12,23 @@
     "IOU_THRESHOLD_TAG": 0.3,
     "BAG_MODEL_WEIGHT": "/home/frinksacckymore001/bag_835_coco_epoch170.pt",
     "TAG_MODEL_WEIGHT": "/home/frinksacckymore001/tag_513_coco_best.pt",
-    "6": ["/home/frinksacckymore001/data_acc/label_tag_data/102_clip.mp4", 0, 1500, 1900],
-    "7": [
-      "/home/frinksacckymore001/data_acc/label_tag_data/split2_00000003755000000.mp4",
-      1,
-      700,
-      500
+    "6": [
+      "rtsp://admin:Frinks%402020@192.168.1.19:554/Streaming/channels/101?transportmode=unicast",
+      0,
+      1500,
+      1900
     ],
-    "8": ["/home/frinksacckymore001/data_acc/label_tag_data/115_clip.mp4", 0, 1500, 1900]
+    "7": [
+      "rtsp://admin:Frinks%402020@192.168.1.21:554/Streaming/channels/101?transportmode=unicast",
+      0,
+      1280,
+      1500
+    ],
+    "8": [
+      "rtsp://admin:Frinks%402020@192.168.1.22:554/Streaming/channels/101?transportmode=unicast",
+      1,
+      1280,
+      700
+    ]
   }
 ]

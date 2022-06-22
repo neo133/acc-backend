@@ -2,14 +2,22 @@
   {
     "VID_OUT": null,
     "SAVE_FRAME": false,
-    "IM_SHOW": true,
+    "IM_SHOW": false,
     "FRAME_SKIP": 1,
     "DETECT_ONLY_AFTER_CX": 0,
     "DETECT_ONLY_AFTER_CY": 0,
     "SCORE_THRESHOLD_BAG": 0.7,
     "IOU_THRESHOLD_BAG": 0.15,
     "BAG_MODEL_WEIGHT": "/home/frinksacckymore001/bestm_bag.pt",
-    "1": ["/home/frinksacckymore001/data_acc/bag_counting_data/hiv00004.mp4", 1, 700],
-    "2": ["/home/frinksacckymore001/data_acc/bag_counting_data/hiv00022_reversed.mp4", 0, 1700]
+    "1": [
+      "rtsp://admin:Frinks%402020@192.168.1.23:554/Streaming/channels/101?transportmode=unicast",
+      1,
+      700
+    ],
+    "4": [
+      "rtsp://admin:Frinks%402020@192.168.1.24:554/Streaming/channels/101?transportmode=unicast",
+      1,
+      700
+    ]
   }
 ]
