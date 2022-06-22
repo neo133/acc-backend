@@ -15,7 +15,10 @@ const configObj = {
   DB_DOMAIN: process.env.DB_DOMAIN,
   ALLOWED_DOMAIN: process.env.DASHBOARD_APP_ORIGIN,
   IS_SLAVE: process.env.IS_SLAVE === '0',
-  SLAVE_DOMAIN: process.env.SLAVE_DOMAIN
+  SLAVE_DOMAIN: process.env.SLAVE_DOMAIN,
+  accessKeyId: process.env.AWSAccessKeyId,
+  secretAccessKey: process.env.AWSSecretKey,
+  BASE_PATH: process.env.BASE_PATH
 };
 
 const defaultConfig = {

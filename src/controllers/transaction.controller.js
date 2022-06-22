@@ -1,3 +1,5 @@
+import fs from 'fs';
+import AWS from 'aws-sdk';
 import { sendHttpResponse } from '../utils/createReponse';
 import {
   createService,
@@ -17,7 +19,13 @@ import {
   getServiceDetails,
   fetchMissingLabels
 } from '../sequelizeQueries/transaction.queries';
+import constants from '../config/constants';
 import { io } from '../index';
+
+const s3 = new AWS.S3({
+  accessKeyId: constants.accessKeyId,
+  secretAccessKey: constants.secretAccessKey
+});
 
 export const getPrintingBelts = async (req, res) => {
   try {
@@ -160,12 +168,37 @@ export const createBagEntry = async data => {
 export const createTagEntry = async data => {
   try {
     const { belt_id, transaction_id, is_labeled, image_location } = data;
-    insertTagEntry({
-      printing_belt_id: parseInt(belt_id, 10),
-      transaction_id: parseInt(transaction_id, 10),
-      is_labeled,
-      image_location
-    });
+    if (!is_labeled) {
+      // upload image to s3 and save link generated
+      const localImagePath = `${constants.BASE_PATH}/${belt_id}/${image_location}`;
+      fs.readFile(localImagePath, (e, obj) => {
+        if (e) throw e;
+        const params = {
+          Key: image_location,
+          Body: JSON.stringify(obj, null, 2),
+          Bucket: `acc-defects/${belt_id}`,
+          ContentEncoding: 'base64',
+          ACL: 'public-read'
+        };
+        s3.upload(params, (s3Err, info) => {
+          if (s3Err) throw s3Err;
+          console.log(`File uploaded successfully at ${info.Location}`);
+          insertTagEntry({
+            printing_belt_id: parseInt(belt_id, 10),
+            transaction_id: parseInt(transaction_id, 10),
+            is_labeled: 1,
+            local_image_location: localImagePath,
+            s3_image_location: info.Location
+          });
+        });
+      });
+    } else {
+      insertTagEntry({
+        printing_belt_id: parseInt(belt_id, 10),
+        transaction_id: parseInt(transaction_id, 10),
+        is_labeled: 1
+      });
+    }
     // send data to AWS server
   } catch (err) {
     console.error('err --- user.controller --- createTagEntry:', err.message);

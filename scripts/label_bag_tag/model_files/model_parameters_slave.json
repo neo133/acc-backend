@@ -15,32 +15,32 @@
     "1": [
       "rtsp://admin:Frinks%402020@192.168.1.18:554/Streaming/channels/101?transportmode=unicast",
       1,
-      1180,
+      1280,
       500
     ],
     "2": [
       "rtsp://admin:Frinks%402020@192.168.1.17:554/Streaming/channels/101?transportmode=unicast",
       1,
-      1180,
+      1280,
       500
     ],
     "3": [
       "rtsp://admin:Frinks%402020@192.168.1.16:554/Streaming/channels/101?transportmode=unicast",
       0,
       1280,
-      1900
+      500
     ],
     "4": [
       "rtsp://admin:Frinks%402020@192.168.1.15:554/Streaming/channels/101?transportmode=unicast",
       1,
       1280,
-      600
+      500
     ],
     "5": [
       "rtsp://admin:Frinks%402020@192.168.1.20:554/Streaming/channels/101?transportmode=unicast",
       0,
       1280,
-      1500
+      1980
     ]
   }
 ]
