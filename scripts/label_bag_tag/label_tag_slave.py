@@ -458,9 +458,9 @@ def main():  # img_path = Full path to image
             sys.exit(1)  # exiting
 
         # to create windows according to the no. of videos in RTSP links
-        # if IM_SHOW:
-        #     for i in range(len(RTSP_LINKS)):
-        #         cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
+        if IM_SHOW:
+            for i in range(len(RTSP_LINKS)):
+                cv2.namedWindow(f'{i}', cv2.WINDOW_NORMAL)
 
         # ------------------------------------------------------ TRACKERS --------------------------------------------------------------------
 
@@ -561,8 +561,12 @@ def main():  # img_path = Full path to image
                         else:
                             success, img = master_video[i].read()
 
-                            if success:
-                                img_master[i] = img
+                            try:
+                                if success:
+                                    img_master[i] = img
+                            except:
+                                print(f"[ERROR] Camera stream is not available!!!")
+                                pass
                     else:
 
                         img_master[i] = np.zeros(
@@ -702,7 +706,6 @@ def main():  # img_path = Full path to image
                                         # API CALLS HERE
                                         sftp.put(
                                             f"{MISSED_TAG_PATH_BASE_URL}/missed_tag/{beltid_master[z]}/{image_name}",  f"{SCP_PATH_BASE_URL}/missed_tag/{beltid_master[z]}/{image_name}")
-                                        print("")
                                         sio.emit("tag-entry", {
                                             "belt_id": beltid_master[z],
                                             "transaction_id": transaction_id_master[z],
