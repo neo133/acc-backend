@@ -23,7 +23,7 @@ from PIL import Image
 import socketio
 import paramiko
 
-BASE_URL = "http://10.5.50.133:9000"
+BASE_URL = "http://192.168.1.150:9000"
 MISSED_TAG_PATH_BASE_URL = "/home/frinksacckymore002/acc-backend"
 SCP_PATH_BASE_URL = "/home/frinksacckymore001/acc-backend"
 
@@ -32,7 +32,7 @@ sio.connect(BASE_URL)
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-ssh.connect('10.5.50.133', username='frinksacckymore001',
+ssh.connect('192.168.1.150', username='frinksacckymore001',
             password='Frinks@2020')
 sftp = ssh.open_sftp()
 
