@@ -36,7 +36,7 @@ export const fetchUsedPrintingBeltIds = async () =>
   await models.transaction_master.findAll({
     attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('printing_belt_id')), 'printing_belt_id']],
     where: {
-      is_active: 1
+      is_listed: 1
     },
     order: [['printing_belt_id', 'ASC']]
   });
@@ -45,7 +45,7 @@ export const fetchUsedVehicleBeltIds = async () =>
   await models.transaction_master.findAll({
     attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('vehicle_id')), 'vehicle_id']],
     where: {
-      is_active: 1
+      is_listed: 1
     },
     order: [['vehicle_id', 'ASC']]
   });
@@ -53,7 +53,7 @@ export const fetchUsedVehicleBeltIds = async () =>
 export const fetchActiveBagTransaction = async () =>
   await models.transaction_master.findAll({
     where: {
-      is_active: 1
+      is_listed: 1
     },
     include: [
       {
@@ -106,6 +106,7 @@ export const getTransaction = async id => await models.transaction_master.findBy
 export const stopTransactionLocal = async id =>
   await models.transaction_master.update(
     {
+      is_listed: 0,
       is_active: 0,
       stopped_at: new Date()
     },

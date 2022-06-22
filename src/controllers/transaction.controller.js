@@ -214,6 +214,9 @@ export const getActiveTransaction = async (req, res) => {
           vehicle_type: e?.vehicle?.vehicle_type,
           container_count: e?.vehicle?.container,
           stopped_at: e?.stopped_at,
+          count_fininshed_at: e?.count_fininshed_at,
+          is_listed: e?.is_listed,
+          is_active: e?.is_active,
           ...transactionRes[e?.id]
         };
       }
@@ -230,6 +233,9 @@ export const getActiveTransaction = async (req, res) => {
           missed_data: getMissedLabelsPaths(e?.tag_counting_masters),
           tag_machine_id: e?.printing_belt?.machine_id,
           stopped_at: e?.stopped_at,
+          count_fininshed_at: e?.count_fininshed_at,
+          is_listed: e?.is_listed,
+          is_active: e?.is_active,
           ...transactionRes[e?.id]
         };
       }

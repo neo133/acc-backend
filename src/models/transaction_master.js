@@ -51,6 +51,15 @@ module.exports = (sequelize, DataTypes) => {
       stopped_at: {
         type: DataTypes.DATE,
         allowNull: true
+      },
+      is_listed: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue: 1
+      },
+      count_finished_at: {
+        type: DataTypes.DATE,
+        allowNull: true
       }
     },
     {

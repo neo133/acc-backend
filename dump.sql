@@ -186,6 +186,8 @@ CREATE TABLE `transaction_master` (
   `bag_count` int(11) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT 1,
   `stopped_at` datetime DEFAULT NULL,
+  `is_listed` tinyint(4) NOT NULL DEFAULT 1,
+  `count_finished_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `transaction_master_FK` (`printing_belt_id`),
   KEY `transaction_master_FK_1` (`vehicle_id`),
@@ -200,7 +202,7 @@ CREATE TABLE `transaction_master` (
 
 LOCK TABLES `transaction_master` WRITE;
 /*!40000 ALTER TABLE `transaction_master` DISABLE KEYS */;
-INSERT INTO `transaction_master` VALUES (66,1,1,'2022-06-18 13:39:14','\'FDSOFJDS','ACC Gold',18,0,'2022-06-19 21:09:00'),(67,2,5,'2022-06-19 12:58:07','fdsf','ACC Suraksha',10,0,'2022-06-19 21:13:16'),(68,1,1,'2022-06-19 21:27:56','d231','ACC Gold',20,0,'2022-06-19 21:56:23'),(69,6,3,'2022-06-19 21:41:42','123d','ACC Suraksha',10,0,'2022-06-19 21:55:07'),(70,6,3,'2022-06-19 21:42:11','123d','ACC Suraksha',10,0,'2022-06-19 22:32:22'),(71,2,5,'2022-06-19 21:42:59','21f','ACC Suraksha',70,1,NULL),(72,4,6,'2022-06-19 21:43:52','21dsa','ACC Gold',3,1,NULL),(73,3,7,'2022-06-19 21:53:37','3ft','ACC Suraksha',670,1,NULL),(74,1,1,'2022-06-19 21:56:45','2313','ACC Suraksha',22,1,NULL);
+INSERT INTO `transaction_master` VALUES (66,1,1,'2022-06-18 13:39:14','\'FDSOFJDS','ACC Gold',18,0,'2022-06-19 21:09:00',1,NULL),(67,2,5,'2022-06-19 12:58:07','fdsf','ACC Suraksha',10,0,'2022-06-19 21:13:16',1,NULL),(68,1,1,'2022-06-19 21:27:56','d231','ACC Gold',20,0,'2022-06-19 21:56:23',1,NULL),(69,6,3,'2022-06-19 21:41:42','123d','ACC Suraksha',10,0,'2022-06-19 21:55:07',1,NULL),(70,6,3,'2022-06-19 21:42:11','123d','ACC Suraksha',10,0,'2022-06-19 22:32:22',1,NULL),(71,2,5,'2022-06-19 21:42:59','21f','ACC Suraksha',70,1,NULL,1,NULL),(72,4,6,'2022-06-19 21:43:52','21dsa','ACC Gold',3,1,NULL,1,NULL),(73,3,7,'2022-06-19 21:53:37','3ft','ACC Suraksha',670,1,NULL,1,NULL),(74,1,1,'2022-06-19 21:56:45','2313','ACC Suraksha',22,1,NULL,1,NULL);
 /*!40000 ALTER TABLE `transaction_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -277,4 +279,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-20 17:40:00
+-- Dump completed on 2022-06-22 10:43:00
