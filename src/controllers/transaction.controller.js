@@ -82,6 +82,7 @@ export const createServiceEntry = async (req, res) => {
     ]);
     const serviceDetails = await getServiceDetails(serviceRes.id);
     const resData = {
+      id: serviceDetails.id,
       bag_count: 0,
       bag_belt_id: serviceDetails?.vehicle_id,
       limit: serviceDetails?.bag_count,

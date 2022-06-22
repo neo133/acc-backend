@@ -6,6 +6,7 @@ import middlewaresConfig from './config/middlewares';
 import constants from './config/constants';
 import ApiRoutes from './routes';
 import { createBagEntry, createTagEntry } from './controllers/transaction.controller';
+import { stopTransactionLocal } from './sequelizeQueries/transaction.queries';
 
 const app = express();
 const httpServer = createServer(app);
@@ -37,6 +38,10 @@ io.on('connection', socket => {
     // call transaction controlled function
     io.sockets.emit('entry', data);
     createTagEntry(data);
+  });
+  socket.on('limit-stop', data => {
+    io.sockets.emit('stop', data);
+    stopTransactionLocal(data.transaction_id);
   });
 });
 
