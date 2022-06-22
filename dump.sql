@@ -42,7 +42,6 @@ CREATE TABLE `bag_counting_master` (
 
 LOCK TABLES `bag_counting_master` WRITE;
 /*!40000 ALTER TABLE `bag_counting_master` DISABLE KEYS */;
-INSERT INTO `bag_counting_master` VALUES (83,1,'2022-06-18 13:39:16',66,NULL),(84,1,'2022-06-18 13:39:24',66,NULL),(85,1,'2022-06-18 13:39:36',66,NULL);
 /*!40000 ALTER TABLE `bag_counting_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +91,7 @@ CREATE TABLE `packer_master` (
   `packer_type` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `packer_master_UN` (`machine_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +100,7 @@ CREATE TABLE `packer_master` (
 
 LOCK TABLES `packer_master` WRITE;
 /*!40000 ALTER TABLE `packer_master` DISABLE KEYS */;
-INSERT INTO `packer_master` VALUES (1,'p-100',0),(2,'p-101',0),(3,'p-102',1);
+INSERT INTO `packer_master` VALUES (1,'661',1),(2,'662',1),(3,'663',1),(4,'664',1);
 /*!40000 ALTER TABLE `packer_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,7 +129,7 @@ CREATE TABLE `printing_belt_master` (
 
 LOCK TABLES `printing_belt_master` WRITE;
 /*!40000 ALTER TABLE `printing_belt_master` DISABLE KEYS */;
-INSERT INTO `printing_belt_master` VALUES (1,'pr-101',1,1),(2,'pr-102',1,1),(3,'pr-103',1,1),(4,'pr-104',2,1),(5,'pr-105',2,1),(6,'pr-106',3,1),(7,'pr-107',3,1),(8,'pr-108',3,1);
+INSERT INTO `printing_belt_master` VALUES (1,'661BC3',1,1),(2,'661BC4',1,1),(3,'662BC3',2,0),(4,'662BC4',2,1),(5,'663BC1',3,1),(6,'663BC2',3,1),(7,'664BC2',4,1),(8,'664BC3',4,1);
 /*!40000 ALTER TABLE `printing_belt_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,7 +164,6 @@ CREATE TABLE `tag_counting_master` (
 
 LOCK TABLES `tag_counting_master` WRITE;
 /*!40000 ALTER TABLE `tag_counting_master` DISABLE KEYS */;
-INSERT INTO `tag_counting_master` VALUES (88,1,66,1,NULL,'2022-06-18 13:39:20',NULL,NULL,0),(89,1,66,0,NULL,'2022-06-18 13:39:26',NULL,NULL,0),(90,1,66,1,NULL,'2022-06-18 13:39:32',NULL,NULL,0),(91,2,67,1,'','2022-06-20 03:55:52',NULL,'',0),(92,2,67,0,'','2022-06-20 03:55:52',NULL,'',0),(93,2,67,0,'','2022-06-20 03:55:52',NULL,'',0),(94,2,67,1,'','2022-06-20 03:55:52',NULL,'',0);
 /*!40000 ALTER TABLE `tag_counting_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -202,7 +200,6 @@ CREATE TABLE `transaction_master` (
 
 LOCK TABLES `transaction_master` WRITE;
 /*!40000 ALTER TABLE `transaction_master` DISABLE KEYS */;
-INSERT INTO `transaction_master` VALUES (66,1,1,'2022-06-18 13:39:14','\'FDSOFJDS','ACC Gold',18,0,'2022-06-19 21:09:00',1,NULL),(67,2,5,'2022-06-19 12:58:07','fdsf','ACC Suraksha',10,0,'2022-06-19 21:13:16',1,NULL),(68,1,1,'2022-06-19 21:27:56','d231','ACC Gold',20,0,'2022-06-19 21:56:23',1,NULL),(69,6,3,'2022-06-19 21:41:42','123d','ACC Suraksha',10,0,'2022-06-19 21:55:07',1,NULL),(70,6,3,'2022-06-19 21:42:11','123d','ACC Suraksha',10,0,'2022-06-19 22:32:22',1,NULL),(71,2,5,'2022-06-19 21:42:59','21f','ACC Suraksha',70,1,NULL,1,NULL),(72,4,6,'2022-06-19 21:43:52','21dsa','ACC Gold',3,1,NULL,1,NULL),(73,3,7,'2022-06-19 21:53:37','3ft','ACC Suraksha',670,1,NULL,1,NULL),(74,1,1,'2022-06-19 21:56:45','2313','ACC Suraksha',22,1,NULL,1,NULL);
 /*!40000 ALTER TABLE `transaction_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -226,7 +223,7 @@ CREATE TABLE `user_master` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   UNIQUE KEY `phone_number_UNIQUE` (`phone_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -235,7 +232,7 @@ CREATE TABLE `user_master` (
 
 LOCK TABLES `user_master` WRITE;
 /*!40000 ALTER TABLE `user_master` DISABLE KEYS */;
-INSERT INTO `user_master` VALUES (1,'Akshay','Chaturvedi','8057466860','akshay.chaturvedi@frinks.ai','$2a$10$kPCMB10Ift/mFl4Q9.6M3u7mOVCm464tetX2oLgthcnaJinnNQFLq','2022-06-13 08:05:45','2022-06-13 13:36:22','user');
+INSERT INTO `user_master` VALUES (1,'Akshay','Chaturvedi','8057466860','akshay.chaturvedi@frinks.ai','$2a$10$kPCMB10Ift/mFl4Q9.6M3u7mOVCm464tetX2oLgthcnaJinnNQFLq','2022-06-13 08:05:45','2022-06-13 13:36:22','user'),(175,'ACC','Admin','8349997662','parashkumar.sharma@acclimited.com','$2a$10$kPCMB10Ift/mFl4Q9.6M3u7mOVCm464tetX2oLgthcnaJinnNQFLq','2022-06-22 08:27:40','2022-06-22 13:57:40','user');
 /*!40000 ALTER TABLE `user_master` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,7 +254,7 @@ CREATE TABLE `vehicle_master` (
   UNIQUE KEY `vehicle_master_UN` (`machine_id`),
   KEY `vehicle_master_FK` (`printing_belt_id`),
   CONSTRAINT `vehicle_master_FK` FOREIGN KEY (`printing_belt_id`) REFERENCES `printing_belt_master` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -266,7 +263,7 @@ CREATE TABLE `vehicle_master` (
 
 LOCK TABLES `vehicle_master` WRITE;
 /*!40000 ALTER TABLE `vehicle_master` DISABLE KEYS */;
-INSERT INTO `vehicle_master` VALUES (1,'v-100',0,NULL,1,1),(2,'v-101',0,NULL,4,1),(3,'v-102',1,3,6,0),(5,'v-103',1,5,2,0),(6,'v-104',0,NULL,4,0),(7,'v-105',0,NULL,3,0);
+INSERT INTO `vehicle_master` VALUES (1,'681LM1',1,1,2,1),(2,'681LM2',1,1,2,0),(3,'682LM1',1,1,1,0),(4,'682LM2',1,1,1,1),(5,'683LM1',1,1,4,0),(6,'683LM2',1,1,4,0),(7,'684LM1',1,1,3,0),(8,'684LM2',1,1,3,0),(9,'686LM1',1,1,5,0),(10,'687LM1',1,1,6,0),(11,'688LM1',1,1,8,0),(12,'688LM2',1,1,8,0),(13,'689LM1',1,1,7,0),(14,'689LM2',1,1,7,0);
 /*!40000 ALTER TABLE `vehicle_master` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -279,4 +276,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-06-22 10:43:00
+-- Dump completed on 2022-06-22 16:23:45

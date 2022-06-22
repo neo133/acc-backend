@@ -39,8 +39,8 @@
     "5": [
       "rtsp://admin:Frinks%402020@192.168.1.20:554/Streaming/channels/101?transportmode=unicast",
       0,
-      1280,
-      1980
+      650,
+      1430
     ]
   }
 ]
